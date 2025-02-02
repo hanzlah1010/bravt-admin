@@ -1,0 +1,68 @@
+export type VultrPlan = {
+  id: string
+  locations: string[]
+  hourly_cost: number
+  monthly_cost: number
+  type: "vc2"
+  ram: number
+  vcpu_count: number
+}
+
+export type VultrInstance = {
+  id: string
+  plan: string
+  label: string
+  power_status: "running" | "stopped"
+  server_status: "locked" | "active"
+  default_password?: string
+  features: string[]
+}
+
+export type VultrSSHKey = {
+  id: string
+  name: string
+}
+
+export type VultrFirewallGroup = {
+  id: string
+  description: string
+}
+
+export type VultrFirewallRule = {
+  id: string
+}
+
+export type VultrSnapshot = {
+  id: string
+  description: string
+}
+
+export type VultrISO = {
+  id: string
+  filename: string
+  url: string
+}
+
+export type VultrOS = {
+  id: string
+  family: string
+}
+
+export type VultrBackupSchedule = {
+  enabled: boolean
+  type: string
+  next_scheduled_time_utc: string
+  hour: number
+  dow: number
+  dom: number
+}
+
+export type VultrBackup = {
+  id: string
+  date_created: string
+  description: string
+  size: number
+  status: string
+  os_id: number
+  app_id: number
+}
