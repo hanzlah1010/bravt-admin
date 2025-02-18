@@ -15,37 +15,37 @@ import {
   AlertDialogAction
 } from "@/components/ui/alert-dialog"
 
-import type { VultrSSHKey } from "@/types/vultr"
+import type { VultrFirewallGroup } from "@/types/vultr"
 import type { Resource } from "@/types/db"
 
-type DeleteSSHKeyDialogProps = {
+type DeleteFirewallDialogProps = {
   open: boolean
   onOpenChange: () => void
-  sshKey?: VultrSSHKey
+  firewall?: VultrFirewallGroup
 }
 
-export default function DeleteSSHKeyDialog({
-  sshKey,
+export default function DeleteFirewallDialog({
+  firewall,
   open,
   onOpenChange
-}: DeleteSSHKeyDialogProps) {
+}: DeleteFirewallDialogProps) {
   const queryClient = useQueryClient()
 
-  const { isPending, mutate: deleteSSHKey } = useMutation({
+  const { isPending, mutate: deleteFirewall } = useMutation({
     mutationFn: async () => {
-      if (!sshKey) throw "No ssh key to delete"
-      await api.delete(`/ssh/${sshKey?.id}`)
+      if (!firewall) throw "No firewall group to delete"
+      await api.delete(`/firewall/${firewall?.id}`)
     },
     onSuccess: () => {
-      queryClient.setQueryData<(VultrSSHKey & Resource)[]>(
-        ["ssh-keys"],
+      queryClient.setQueryData<(VultrFirewallGroup & Resource)[]>(
+        ["firewall-groups"],
         (prev) => {
           if (!prev) return prev
-          return prev.filter((key) => key.id !== sshKey?.id)
+          return prev.filter((f) => f.id !== firewall?.id)
         }
       )
 
-      toast.success("SSH Key Deleted!")
+      toast.success("Firewall Group Deleted!")
     },
     onError: handleError,
     onSettled: onOpenChange
@@ -57,8 +57,10 @@ export default function DeleteSSHKeyDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            SSH Key{" "}
-            <span className="font-medium text-foreground">{sshKey?.name}</span>{" "}
+            Firewall group{" "}
+            <span className="font-medium text-foreground">
+              {firewall?.description}
+            </span>{" "}
             will be permanently deleted! This action can&apos;t be undone!
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -74,7 +76,7 @@ export default function DeleteSSHKeyDialog({
             <Button
               variant="destructive"
               loading={isPending}
-              onClick={() => deleteSSHKey()}
+              onClick={() => deleteFirewall()}
             >
               Delete
             </Button>

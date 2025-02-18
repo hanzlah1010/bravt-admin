@@ -8,18 +8,15 @@ import { api } from "@/lib/api"
 import { getSortingStateParser } from "@/lib/parsers"
 
 import type { Resource } from "@/types/db"
-import type { VultrISO } from "@/types/vultr"
+import type { VultrFirewallGroup } from "@/types/vultr"
 
-export function useISOsQuery() {
-  const { data = [], ...query } = useQuery<(VultrISO & Resource)[]>({
-    queryKey: ["isos"],
+export function useFirewallGroupsQuery() {
+  const { data = [], ...query } = useQuery<(VultrFirewallGroup & Resource)[]>({
+    queryKey: ["firewall-groups"],
     placeholderData: keepPreviousData,
     queryFn: async () => {
-      const { data } = await api.get("/admin/isos")
+      const { data } = await api.get("/admin/firewall-groups")
       return data
-    },
-    refetchInterval: ({ state }) => {
-      return state.data?.some((item) => item.status === "pending") ? 5000 : 0
     }
   })
 
@@ -28,15 +25,15 @@ export function useISOsQuery() {
       search: parseAsString.withDefault(""),
       from: parseAsString,
       to: parseAsString,
-      sort: getSortingStateParser<VultrISO & Resource>().withDefault([
+      sort: getSortingStateParser<VultrFirewallGroup & Resource>().withDefault([
         { id: "date_created", desc: true }
       ])
     },
-    { urlKeys: { search: "filename" } }
+    { urlKeys: { search: "description" } }
   )
 
   const handleSort = React.useCallback(
-    (items: (VultrISO & Resource)[]) => {
+    (items: (VultrFirewallGroup & Resource)[]) => {
       return orderBy(
         items,
         sort.map((s) => {
@@ -59,15 +56,16 @@ export function useISOsQuery() {
     }
 
     return handleSort(
-      data.filter((iso) => {
+      data.filter((firewall) => {
         const matchesQuery =
-          iso.filename.toLowerCase().includes(query) ||
-          iso.user.email.toLowerCase().includes(query)
+          firewall.description.toLowerCase().includes(query) ||
+          firewall.user.email.toLowerCase().includes(query)
 
-        const isoDate = parseISO(iso.date_created)
+        const firewallDate = parseISO(firewall.date_created)
 
         const matchesDateRange =
-          (!fromDate || isoDate >= fromDate) && (!toDate || isoDate <= toDate)
+          (!fromDate || firewallDate >= fromDate) &&
+          (!toDate || firewallDate <= toDate)
 
         return matchesQuery && matchesDateRange
       })

@@ -9,11 +9,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatPrice(amount: string | number, maxDecimals = 3) {
+export function formatPrice(
+  amount: string | number,
+  maxDecimals = 3,
+  style: keyof Intl.NumberFormatOptionsStyleRegistry = "currency"
+) {
   const amtNumber = Number(amount)
   if (isNaN(amtNumber)) return ""
   return new Intl.NumberFormat("en-US", {
-    style: "currency",
+    style,
     currency: "USD",
     minimumFractionDigits: 0,
     maximumFractionDigits: maxDecimals

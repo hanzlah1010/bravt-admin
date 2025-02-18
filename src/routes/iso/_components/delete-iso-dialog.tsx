@@ -48,10 +48,6 @@ export default function DeleteISODialog({
     onSettled: onOpenChange
   })
 
-  if (!iso) {
-    return null
-  }
-
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>

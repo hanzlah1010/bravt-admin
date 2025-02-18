@@ -12,6 +12,8 @@ export type VultrInstance = {
   id: string
   plan: string
   label: string
+  hostname: string
+  date_created: string
   power_status: "running" | "stopped"
   server_status: "locked" | "active"
   default_password?: string
@@ -28,6 +30,7 @@ export type VultrSSHKey = {
 export type VultrFirewallGroup = {
   id: string
   description: string
+  date_created: string
 }
 
 export type VultrFirewallRule = {
@@ -37,6 +40,10 @@ export type VultrFirewallRule = {
 export type VultrSnapshot = {
   id: string
   description: string
+  size: number
+  compressed_size: number
+  status: "pending" | "complete"
+  date_created: string
 }
 
 export type VultrISO = {

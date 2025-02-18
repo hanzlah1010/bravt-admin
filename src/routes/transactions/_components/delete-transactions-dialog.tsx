@@ -61,17 +61,13 @@ export default function DeleteTransactionsDialog({
     onSettled: () => onOpenChange(false)
   })
 
-  if (!transactions?.length) {
-    return null
-  }
-
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       {showTrigger ? (
         <AlertDialogTrigger asChild>
           <Button size="sm" variant="destructive">
             <Trash2Icon aria-hidden="true" />
-            Delete ({transactions.length})
+            Delete ({transactions?.length})
           </Button>
         </AlertDialogTrigger>
       ) : null}
@@ -81,8 +77,8 @@ export default function DeleteTransactionsDialog({
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             <span className="font-medium text-foreground">
-              {transactions.length}{" "}
-              {transactions.length === 1 ? "transaction" : "transactions"}
+              {transactions?.length}{" "}
+              {transactions?.length === 1 ? "transaction" : "transactions"}
             </span>{" "}
             will be deleted permanently! This action can&apos;t be undone!
           </AlertDialogDescription>

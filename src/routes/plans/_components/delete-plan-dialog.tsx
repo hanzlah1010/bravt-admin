@@ -47,10 +47,6 @@ export default function DeletePlanDialog({
     onSettled: onOpenChange
   })
 
-  if (!plan) {
-    return null
-  }
-
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>

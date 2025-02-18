@@ -55,10 +55,9 @@ export function AppSidebar() {
       subItems: [
         { label: "Instances", url: "/instances" },
         { label: "Snapshots", url: "/snapshots" },
-        { label: "Firewalls", url: "/firewalls" },
+        { label: "Firewalls", url: "/firewall-groups" },
         { label: "SSH Keys", url: "/ssh-keys" },
-        { label: "ISO", url: "/iso" },
-        { label: "Backups", url: "/backups" }
+        { label: "ISO", url: "/iso" }
       ]
     },
     {

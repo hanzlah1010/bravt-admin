@@ -2,20 +2,25 @@ import * as React from "react"
 import orderBy from "lodash.orderby"
 import { parseISO } from "date-fns"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
-import { parseAsString, useQueryStates } from "nuqs"
+import {
+  parseAsArrayOf,
+  parseAsString,
+  parseAsStringEnum,
+  useQueryStates
+} from "nuqs"
 
 import { api } from "@/lib/api"
 import { getSortingStateParser } from "@/lib/parsers"
 
 import type { Resource } from "@/types/db"
-import type { VultrISO } from "@/types/vultr"
+import type { VultrSnapshot } from "@/types/vultr"
 
-export function useISOsQuery() {
-  const { data = [], ...query } = useQuery<(VultrISO & Resource)[]>({
-    queryKey: ["isos"],
+export function useSnapshotsQuery() {
+  const { data = [], ...query } = useQuery<(VultrSnapshot & Resource)[]>({
+    queryKey: ["snapshots"],
     placeholderData: keepPreviousData,
     queryFn: async () => {
-      const { data } = await api.get("/admin/isos")
+      const { data } = await api.get("/admin/snapshots")
       return data
     },
     refetchInterval: ({ state }) => {
@@ -23,20 +28,23 @@ export function useISOsQuery() {
     }
   })
 
-  const [{ search, sort, from, to }] = useQueryStates(
+  const [{ search, sort, status, from, to }] = useQueryStates(
     {
       search: parseAsString.withDefault(""),
+      status: parseAsArrayOf(
+        parseAsStringEnum(["pending", "complete"])
+      ).withDefault([]),
       from: parseAsString,
       to: parseAsString,
-      sort: getSortingStateParser<VultrISO & Resource>().withDefault([
+      sort: getSortingStateParser<VultrSnapshot & Resource>().withDefault([
         { id: "date_created", desc: true }
       ])
     },
-    { urlKeys: { search: "filename" } }
+    { urlKeys: { search: "description" } }
   )
 
   const handleSort = React.useCallback(
-    (items: (VultrISO & Resource)[]) => {
+    (items: (VultrSnapshot & Resource)[]) => {
       return orderBy(
         items,
         sort.map((s) => {
@@ -54,25 +62,28 @@ export function useISOsQuery() {
     const fromDate = from ? parseISO(from) : null
     const toDate = to ? parseISO(to) : null
 
-    if (!query && !fromDate && !toDate) {
+    if (!query && !status && !fromDate && !toDate) {
       return handleSort(data)
     }
 
     return handleSort(
-      data.filter((iso) => {
+      data.filter((snapshot) => {
         const matchesQuery =
-          iso.filename.toLowerCase().includes(query) ||
-          iso.user.email.toLowerCase().includes(query)
+          snapshot.description.toLowerCase().includes(query) ||
+          snapshot.user.email.toLowerCase().includes(query)
 
-        const isoDate = parseISO(iso.date_created)
+        const matchesStatus = !status.length || status.includes(snapshot.status)
+
+        const snapshotDate = parseISO(snapshot.date_created)
 
         const matchesDateRange =
-          (!fromDate || isoDate >= fromDate) && (!toDate || isoDate <= toDate)
+          (!fromDate || snapshotDate >= fromDate) &&
+          (!toDate || snapshotDate <= toDate)
 
-        return matchesQuery && matchesDateRange
+        return matchesQuery && matchesStatus && matchesDateRange
       })
     )
-  }, [handleSort, data, search, from, to])
+  }, [handleSort, data, search, from, to, status])
 
   return { ...query, data: filteredData }
 }

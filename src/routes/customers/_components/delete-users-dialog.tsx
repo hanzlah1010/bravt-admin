@@ -60,17 +60,13 @@ export default function DeleteUsersDialog({
     onSettled: () => onOpenChange(false)
   })
 
-  if (!users?.length) {
-    return null
-  }
-
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       {showTrigger ? (
         <AlertDialogTrigger asChild>
           <Button size="sm" variant="destructive">
             <Trash2Icon aria-hidden="true" />
-            Delete ({users.length})
+            Delete ({users?.length})
           </Button>
         </AlertDialogTrigger>
       ) : null}
@@ -79,21 +75,21 @@ export default function DeleteUsersDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            {users.length > 1 ? (
+            {users && users?.length > 1 ? (
               <span className="font-medium text-foreground">
-                {users.length} users
+                {users?.length} users
               </span>
             ) : (
               <>
                 User{" "}
                 <span className="font-medium text-foreground">
-                  {users[0].email}
+                  {users?.[0].email}
                 </span>
               </>
             )}{" "}
             will be deleted permanently & all data related to{" "}
-            {users.length > 1 ? "them" : "user"} will be lost! This action
-            can&apos;t be undone!
+            {users && users?.length > 1 ? "them" : "user"} will be lost! This
+            action can&apos;t be undone!
           </AlertDialogDescription>
         </AlertDialogHeader>
 

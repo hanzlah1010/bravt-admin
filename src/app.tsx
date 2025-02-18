@@ -5,14 +5,16 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Spinner } from "@/components/ui/spinner"
 
-const Home = lazy(() => import("@/routes/home"))
+const Analytics = lazy(() => import("@/routes/analytics"))
 const Plans = lazy(() => import("@/routes/plans"))
 const Customers = lazy(() => import("@/routes/customers"))
 const Transactions = lazy(() => import("@/routes/transactions"))
 const ActivityLogs = lazy(() => import("@/routes/activity-logs"))
 const SSHKeys = lazy(() => import("@/routes/ssh-keys"))
 const ISO = lazy(() => import("@/routes/iso"))
-const Firewalls = lazy(() => import("@/routes/firewalls"))
+const FirewallGroups = lazy(() => import("@/routes/firewall-groups"))
+const Snapshots = lazy(() => import("@/routes/snapshots"))
+const Instances = lazy(() => import("@/routes/instances"))
 
 export function App() {
   return (
@@ -27,14 +29,16 @@ export function App() {
           }
         >
           <Routes>
-            <Route index element={<Home />} />
+            <Route index element={<Analytics />} />
             <Route path="/plans" element={<Plans />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/activity-logs" element={<ActivityLogs />} />
             <Route path="/ssh-keys" element={<SSHKeys />} />
             <Route path="/iso" element={<ISO />} />
-            <Route path="/firewalls" element={<Firewalls />} />
+            <Route path="/firewall-groups" element={<FirewallGroups />} />
+            <Route path="/snapshots" element={<Snapshots />} />
+            <Route path="/instances" element={<Instances />} />
           </Routes>
         </Suspense>
       </SidebarInset>

@@ -8,18 +8,15 @@ import { api } from "@/lib/api"
 import { getSortingStateParser } from "@/lib/parsers"
 
 import type { Resource } from "@/types/db"
-import type { VultrISO } from "@/types/vultr"
+import type { VultrInstance } from "@/types/vultr"
 
-export function useISOsQuery() {
-  const { data = [], ...query } = useQuery<(VultrISO & Resource)[]>({
-    queryKey: ["isos"],
+export function useInstancesQuery() {
+  const { data = [], ...query } = useQuery<(VultrInstance & Resource)[]>({
+    queryKey: ["instances"],
     placeholderData: keepPreviousData,
     queryFn: async () => {
-      const { data } = await api.get("/admin/isos")
+      const { data } = await api.get("/admin/instances")
       return data
-    },
-    refetchInterval: ({ state }) => {
-      return state.data?.some((item) => item.status === "pending") ? 5000 : 0
     }
   })
 
@@ -28,15 +25,15 @@ export function useISOsQuery() {
       search: parseAsString.withDefault(""),
       from: parseAsString,
       to: parseAsString,
-      sort: getSortingStateParser<VultrISO & Resource>().withDefault([
+      sort: getSortingStateParser<VultrInstance & Resource>().withDefault([
         { id: "date_created", desc: true }
       ])
     },
-    { urlKeys: { search: "filename" } }
+    { urlKeys: { search: "label" } }
   )
 
   const handleSort = React.useCallback(
-    (items: (VultrISO & Resource)[]) => {
+    (items: (VultrInstance & Resource)[]) => {
       return orderBy(
         items,
         sort.map((s) => {
@@ -59,15 +56,17 @@ export function useISOsQuery() {
     }
 
     return handleSort(
-      data.filter((iso) => {
+      data.filter((instance) => {
         const matchesQuery =
-          iso.filename.toLowerCase().includes(query) ||
-          iso.user.email.toLowerCase().includes(query)
+          instance.label.toLowerCase().includes(query) ||
+          instance.hostname.toLowerCase().includes(query) ||
+          instance.user.email.toLowerCase().includes(query)
 
-        const isoDate = parseISO(iso.date_created)
+        const instanceDate = parseISO(instance.date_created)
 
         const matchesDateRange =
-          (!fromDate || isoDate >= fromDate) && (!toDate || isoDate <= toDate)
+          (!fromDate || instanceDate >= fromDate) &&
+          (!toDate || instanceDate <= toDate)
 
         return matchesQuery && matchesDateRange
       })

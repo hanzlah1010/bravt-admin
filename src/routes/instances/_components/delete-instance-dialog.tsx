@@ -15,37 +15,37 @@ import {
   AlertDialogAction
 } from "@/components/ui/alert-dialog"
 
-import type { VultrSSHKey } from "@/types/vultr"
+import type { VultrInstance } from "@/types/vultr"
 import type { Resource } from "@/types/db"
 
-type DeleteSSHKeyDialogProps = {
+type DeleteInstanceDialogProps = {
   open: boolean
   onOpenChange: () => void
-  sshKey?: VultrSSHKey
+  instance?: VultrInstance
 }
 
-export default function DeleteSSHKeyDialog({
-  sshKey,
+export default function DeleteInstanceDialog({
+  instance,
   open,
   onOpenChange
-}: DeleteSSHKeyDialogProps) {
+}: DeleteInstanceDialogProps) {
   const queryClient = useQueryClient()
 
-  const { isPending, mutate: deleteSSHKey } = useMutation({
+  const { isPending, mutate: deleteInstance } = useMutation({
     mutationFn: async () => {
-      if (!sshKey) throw "No ssh key to delete"
-      await api.delete(`/ssh/${sshKey?.id}`)
+      if (!instance) throw "No instance to delete"
+      await api.delete(`/instance/${instance?.id}`)
     },
     onSuccess: () => {
-      queryClient.setQueryData<(VultrSSHKey & Resource)[]>(
-        ["ssh-keys"],
+      queryClient.setQueryData<(VultrInstance & Resource)[]>(
+        ["instances"],
         (prev) => {
           if (!prev) return prev
-          return prev.filter((key) => key.id !== sshKey?.id)
+          return prev.filter((i) => i.id !== instance?.id)
         }
       )
 
-      toast.success("SSH Key Deleted!")
+      toast.success("Instance Deleted!")
     },
     onError: handleError,
     onSettled: onOpenChange
@@ -57,8 +57,10 @@ export default function DeleteSSHKeyDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            SSH Key{" "}
-            <span className="font-medium text-foreground">{sshKey?.name}</span>{" "}
+            Instance{" "}
+            <span className="font-medium text-foreground">
+              {instance?.label}
+            </span>{" "}
             will be permanently deleted! This action can&apos;t be undone!
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -74,7 +76,7 @@ export default function DeleteSSHKeyDialog({
             <Button
               variant="destructive"
               loading={isPending}
-              onClick={() => deleteSSHKey()}
+              onClick={() => deleteInstance()}
             >
               Delete
             </Button>
