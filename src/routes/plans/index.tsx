@@ -20,31 +20,33 @@ export default function Plans() {
   const { onOpen } = usePlanModal()
 
   return (
-    <div className="space-y-3">
+    <>
       <CreatePlanDialog />
-      <AppHeader>
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink to="/">Dashboard</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Plans</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </AppHeader>
+      <div className="space-y-3 px-6 pb-4">
+        <AppHeader>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink to="/">Dashboard</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Plans</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </AppHeader>
 
-      <div className="flex items-center justify-between">
-        <h1 className="font-serif text-3xl font-medium md:text-4xl">Plans</h1>
-        <Button variant="outline" onClick={onOpen}>
-          <PlusCircleIcon />
-          Create Plan
-        </Button>
+        <div className="flex items-center justify-between">
+          <h1 className="font-serif text-3xl font-medium md:text-4xl">Plans</h1>
+          <Button variant="outline" onClick={onOpen}>
+            <PlusCircleIcon />
+            Create Plan
+          </Button>
+        </div>
+
+        <PlansTable />
       </div>
-
-      <PlansTable />
-    </div>
+    </>
   )
 }

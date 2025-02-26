@@ -1,9 +1,16 @@
 import qs from "qs"
 import { clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import {
+  isToday,
+  isYesterday,
+  differenceInCalendarDays,
+  format
+} from "date-fns"
 
 import type { UseQueryStatesKeysMap, Values } from "nuqs"
 import type { ClassValue } from "clsx"
+import type { User } from "@/types/db"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -55,4 +62,20 @@ export function encodeQueryParams(searchParams: Values<UseQueryStatesKeysMap>) {
 export function formatBytesToGB(bytes: number) {
   if (!bytes) return "0 GB"
   return `${(bytes / 1024 ** 3).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} GB`
+}
+
+export function getUserInitials(user: Partial<User>) {
+  if (user.firstName) {
+    return `${user.firstName.charAt(0)}${user.lastName?.charAt(0) || ""}`.toUpperCase()
+  } else {
+    return user.email?.charAt(0).toUpperCase()
+  }
+}
+
+export function formatMsgDate(date: Date) {
+  const today = new Date()
+  if (isToday(date)) return "Today"
+  if (isYesterday(date)) return "Yesterday"
+  if (differenceInCalendarDays(today, date) < 7) return format(date, "EEEE")
+  return format(date, "dd/MM/yyyy")
 }

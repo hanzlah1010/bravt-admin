@@ -28,7 +28,7 @@ import type { ChartConfig } from "@/components/ui/chart"
 
 const chartConfig = {
   count: {
-    label: "Users joined",
+    label: "Users",
     color: "hsl(var(--primary))"
   }
 } satisfies ChartConfig

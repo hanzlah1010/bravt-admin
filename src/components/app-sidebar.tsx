@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import { Link, useLocation } from "react-router"
 import {
   ServerIcon,
@@ -29,61 +29,71 @@ import {
   CollapsibleTrigger
 } from "@/components/ui/collapsible"
 
+const items = [
+  {
+    label: "Dashboard",
+    icon: LayoutDashboardIcon,
+    subItems: [
+      { label: "Analytics", url: "/" },
+      { label: "Plans", url: "/plans" }
+    ]
+  },
+  {
+    label: "VPS Management",
+    icon: ServerIcon,
+    subItems: [
+      { label: "Instances", url: "/instances" },
+      { label: "Snapshots", url: "/snapshots" },
+      { label: "Firewalls", url: "/firewall-groups" },
+      { label: "SSH Keys", url: "/ssh-keys" },
+      { label: "ISO", url: "/iso" }
+    ]
+  },
+  {
+    label: "User Management",
+    icon: UsersIcon,
+    subItems: [
+      { label: "Customers", url: "/customers" },
+      { label: "Transactions", url: "/transactions" }
+    ]
+  },
+  {
+    label: "System",
+    icon: SettingsIcon,
+    subItems: [
+      { label: "Activity Logs", url: "/activity-logs" },
+      { label: "API Keys", url: "/api-keys" }
+    ]
+  }
+]
+
 export function AppSidebar() {
   const { pathname } = useLocation()
 
-  const isActive = (url: string) => {
-    if (url === "/") {
-      return pathname === "/"
-    } else {
-      return pathname.startsWith(url)
-    }
-  }
-
-  const items = [
-    {
-      label: "Dashboard",
-      icon: LayoutDashboardIcon,
-      subItems: [
-        { label: "Analytics", url: "/" },
-        { label: "Plans", url: "/plans" }
-      ]
+  const isActive = useCallback(
+    (url: string) => {
+      if (url === "/") {
+        return pathname === "/"
+      } else {
+        return pathname.startsWith(url)
+      }
     },
-    {
-      label: "VPS Management",
-      icon: ServerIcon,
-      subItems: [
-        { label: "Instances", url: "/instances" },
-        { label: "Snapshots", url: "/snapshots" },
-        { label: "Firewalls", url: "/firewall-groups" },
-        { label: "SSH Keys", url: "/ssh-keys" },
-        { label: "ISO", url: "/iso" }
-      ]
-    },
-    {
-      label: "User Management",
-      icon: UsersIcon,
-      subItems: [
-        { label: "Customers", url: "/customers" },
-        { label: "Transactions", url: "/transactions" }
-      ]
-    },
-    {
-      label: "System",
-      icon: SettingsIcon,
-      subItems: [
-        { label: "Activity Logs", url: "/activity-logs" },
-        { label: "API Keys", url: "/api-keys" }
-      ]
-    }
-  ]
+    [pathname]
+  )
 
   const defaultActive = useMemo(() => {
     return items.findIndex((item) =>
       item.subItems.some((subItem) => isActive(subItem.url))
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isActive])
+
+  const allPaths = useMemo(() => {
+    return items.flatMap((item) => item.subItems.map((subItem) => subItem.url))
   }, [])
+
+  if (!allPaths.includes(pathname)) {
+    return null
+  }
 
   return (
     <Sidebar>
@@ -132,11 +142,8 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={pathname === "/customer-support"}
-            >
-              <Link to="/customer-support">
+            <SidebarMenuButton asChild>
+              <Link to="/tickets">
                 <HeadsetIcon />
                 Customer Support
               </Link>

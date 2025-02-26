@@ -83,11 +83,14 @@ export interface User {
   createdAt: Date
   updatedAt: Date
   provider: USER_PROVIDER
-  isSubscribed: boolean
+  isSubscribed?: Date
+  tickets: Ticket[]
   refreshTokens: RefreshToken[]
   resources: Resource[]
   transactions: Transaction[]
   activities: Activity[]
+  messagesSent: TicketMessage[]
+  messagesReceived: TicketMessage[]
 }
 
 export interface Verification {
@@ -150,4 +153,31 @@ export interface Activity {
   user?: User
   resourceId?: string
   resource?: Resource
+}
+
+export interface Ticket {
+  id: string
+  topic: string
+  closed?: Date
+  lastMessageAt: Date
+  createdAt: Date
+  updatedAt: Date
+  userId: string
+  user: User
+  messages: TicketMessage[]
+}
+
+export interface TicketMessage {
+  id: string
+  message: string
+  deleted?: Date
+  seen?: Date
+  createdAt: Date
+  updatedAt: Date
+  senderId: string
+  sender: User
+  receiverId?: string
+  receiver?: User
+  ticketId: string
+  ticket: Ticket
 }

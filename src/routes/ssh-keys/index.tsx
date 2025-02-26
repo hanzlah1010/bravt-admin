@@ -12,7 +12,7 @@ import {
 
 export default function SSHKeys() {
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 px-6 pb-4">
       <AppHeader>
         <Breadcrumb>
           <BreadcrumbList>

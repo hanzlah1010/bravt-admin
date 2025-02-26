@@ -1,6 +1,6 @@
 import { Link } from "react-router"
 
-import { formatPrice } from "@/lib/utils"
+import { formatPrice, getUserInitials } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useRecentTransactionsQuery } from "@/queries/use-recent-transactions-query"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -52,15 +52,14 @@ export function RecentTransactions() {
                   <div className="flex items-center gap-2">
                     <Avatar>
                       <AvatarFallback>
-                        {item.user.firstName?.[0]?.toUpperCase()}
-                        {item.user.lastName?.[0]?.toUpperCase()}
+                        {getUserInitials(item.user)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
                       <span className="text-[15px] font-medium">
                         {item.user.firstName} {item.user.lastName}
                       </span>
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-[13px] text-muted-foreground">
                         {item.user.email}
                       </span>
                     </div>

@@ -1,3 +1,4 @@
+import "unfonts.css"
 import "@/index.css"
 
 import { StrictMode } from "react"
@@ -9,6 +10,7 @@ import { App } from "@/app"
 import { ThemeProvider } from "@/providers/theme-provider"
 import { QueryProvider } from "@/providers/query-provider"
 import { Toaster } from "@/components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -17,7 +19,9 @@ createRoot(document.getElementById("root")!).render(
         <Toaster richColors />
         <QueryProvider>
           <NuqsAdapter>
-            <App />
+            <TooltipProvider delayDuration={0}>
+              <App />
+            </TooltipProvider>
           </NuqsAdapter>
         </QueryProvider>
       </ThemeProvider>
