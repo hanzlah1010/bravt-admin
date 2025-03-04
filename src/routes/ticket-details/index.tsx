@@ -1,3 +1,4 @@
+import { useParams } from "react-router"
 import { AlertTriangle, RefreshCw } from "lucide-react"
 
 import { useTicketQuery } from "@/queries/use-ticket-query"
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { TicketMessages } from "./_component/ticket-messages"
 
 export default function TicketDetails() {
+  const { ticketId } = useParams()
   const { ticket, status, refetch } = useTicketQuery()
 
   if (status === "pending") {
@@ -36,7 +38,7 @@ export default function TicketDetails() {
   return (
     <div className="flex size-full flex-1 flex-col overflow-hidden">
       <ChatHeader />
-      <TicketMessages />
+      <TicketMessages key={ticketId} />
       <ComposeTicketForm />
     </div>
   )

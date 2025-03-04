@@ -1,35 +1,47 @@
 import { Link } from "react-router"
-import {
-  ArrowLeft,
-  EllipsisVertical,
-  LockKeyholeOpen,
-  MessageSquareX,
-  Trash2
-} from "lucide-react"
+import { formatDate } from "date-fns"
+import { ArrowLeft } from "lucide-react"
+import { toast } from "sonner"
+import { useMutation } from "@tanstack/react-query"
 
+import { api } from "@/lib/api"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { getUserInitials } from "@/lib/utils"
 import { useTicketQuery } from "@/queries/use-ticket-query"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import { useTicketsQuery } from "@/queries/use-tickets-query"
+
+import type { Ticket } from "@/types/db"
+import { handleError } from "@/lib/error"
 
 export function ChatHeader() {
-  const { ticket } = useTicketQuery()
+  const { ticket, updateTicket } = useTicketQuery(false)
+  const { closeTicket } = useTicketsQuery(false)
+
+  const { mutate: close, isPending } = useMutation({
+    mutationFn: async () => {
+      const { data } = await api.patch<Ticket>(`/admin/tickets/${ticket.id}`)
+      return data
+    },
+    onSuccess: (newTicket) => {
+      toast.success(newTicket.closed ? "Ticket Closed" : "Ticket Reopened")
+      updateTicket(newTicket)
+      closeTicket(newTicket)
+    },
+    onError: handleError
+  })
 
   return (
-    <header className="flex shrink-0 items-center justify-between border-b p-4">
+    <header className="flex shrink-0 items-center justify-between gap-4 border-b p-4">
       <div className="flex items-center gap-2">
         <Button
           asChild
           aria-label="Back"
           variant="ghost"
           size="icon"
-          className="shrink-0"
+          className="size-8 shrink-0 rounded-full"
         >
           <Link to="/tickets">
             <ArrowLeft className="size-4" />
@@ -51,23 +63,25 @@ export function ChatHeader() {
         </div>
       </div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button size="icon" variant="ghost" aria-label="Ticket Actions">
-            <EllipsisVertical />
-          </Button>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem>
-            {ticket.closed ? <LockKeyholeOpen /> : <MessageSquareX />}
-            {ticket.closed ? "Reopen Ticket" : "Close Ticket"}
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Trash2 /> Delete Ticket
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className="flex cursor-pointer items-center gap-2">
+        <Label
+          htmlFor={"close-ticket"}
+          className="whitespace-nowrap"
+          title={
+            ticket.closed
+              ? `${formatDate(ticket.closed, "PP hh:mm aa")}`
+              : undefined
+          }
+        >
+          {ticket.closed ? "Ticket Closed" : "Close Ticket"}
+        </Label>
+        <Switch
+          id={"close-ticket"}
+          disabled={isPending}
+          checked={!!ticket.closed}
+          onCheckedChange={() => close()}
+        />
+      </div>
     </header>
   )
 }

@@ -62,6 +62,7 @@ const items = [
     icon: SettingsIcon,
     subItems: [
       { label: "Activity Logs", url: "/activity-logs" },
+      { label: "Notifications", url: "/notifications" },
       { label: "API Keys", url: "/api-keys" }
     ]
   }
@@ -86,14 +87,6 @@ export function AppSidebar() {
       item.subItems.some((subItem) => isActive(subItem.url))
     )
   }, [isActive])
-
-  const allPaths = useMemo(() => {
-    return items.flatMap((item) => item.subItems.map((subItem) => subItem.url))
-  }, [])
-
-  if (!allPaths.includes(pathname)) {
-    return null
-  }
 
   return (
     <Sidebar>

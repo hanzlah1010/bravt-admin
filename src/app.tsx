@@ -1,11 +1,13 @@
 import { lazy } from "react"
 import { Route, Routes } from "react-router"
 
+import { USER_ROLE } from "@/types/db"
 import { TicketsLayout } from "@/routes/tickets/layout"
 import { MainLayout } from "@/components/main-layout"
 import { useSessionQuery } from "@/queries/use-session-query"
 import { Spinner } from "@/components/ui/spinner"
-import { USER_ROLE } from "@/types/db"
+import { SocketProvider, Sockets } from "@/providers/socket-provider"
+import { NotFound } from "@/routes/not-found"
 
 const Analytics = lazy(() => import("@/routes/analytics"))
 const Plans = lazy(() => import("@/routes/plans"))
@@ -19,6 +21,8 @@ const Snapshots = lazy(() => import("@/routes/snapshots"))
 const Instances = lazy(() => import("@/routes/instances"))
 const Tickets = lazy(() => import("@/routes/tickets"))
 const TicketDetails = lazy(() => import("@/routes/ticket-details"))
+const Notifications = lazy(() => import("@/routes/notifications"))
+const CreateNotification = lazy(() => import("@/routes/create-notification"))
 
 export function App() {
   const { user, isPending } = useSessionQuery()
@@ -37,24 +41,33 @@ export function App() {
   }
 
   return (
-    <Routes>
-      <Route element={<MainLayout />}>
-        <Route index element={<Analytics />} />
-        <Route path="/plans" element={<Plans />} />
-        <Route path="/customers" element={<Customers />} />
-        <Route path="/transactions" element={<Transactions />} />
-        <Route path="/activity-logs" element={<ActivityLogs />} />
-        <Route path="/ssh-keys" element={<SSHKeys />} />
-        <Route path="/iso" element={<ISO />} />
-        <Route path="/firewall-groups" element={<FirewallGroups />} />
-        <Route path="/snapshots" element={<Snapshots />} />
-        <Route path="/instances" element={<Instances />} />
-      </Route>
+    <SocketProvider>
+      <Sockets />
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route index element={<Analytics />} />
+          <Route path="/plans" element={<Plans />} />
+          <Route path="/customers" element={<Customers />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/activity-logs" element={<ActivityLogs />} />
+          <Route path="/ssh-keys" element={<SSHKeys />} />
+          <Route path="/iso" element={<ISO />} />
+          <Route path="/firewall-groups" element={<FirewallGroups />} />
+          <Route path="/snapshots" element={<Snapshots />} />
+          <Route path="/instances" element={<Instances />} />
+          <Route path="/notifications">
+            <Route index element={<Notifications />} />
+            <Route path="create" element={<CreateNotification />} />
+          </Route>
+        </Route>
 
-      <Route path="/tickets" element={<TicketsLayout />}>
-        <Route index element={<Tickets />} />
-        <Route path=":ticketId" element={<TicketDetails />} />
-      </Route>
-    </Routes>
+        <Route path="/tickets" element={<TicketsLayout />}>
+          <Route index element={<Tickets />} />
+          <Route path=":ticketId" element={<TicketDetails />} />
+        </Route>
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </SocketProvider>
   )
 }

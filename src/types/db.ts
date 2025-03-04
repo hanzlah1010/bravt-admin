@@ -89,6 +89,7 @@ export interface User {
   resources: Resource[]
   transactions: Transaction[]
   activities: Activity[]
+  notifications: NotificationRecipient[]
   messagesSent: TicketMessage[]
   messagesReceived: TicketMessage[]
 }
@@ -180,4 +181,23 @@ export interface TicketMessage {
   receiver?: User
   ticketId: string
   ticket: Ticket
+}
+
+export interface Notification {
+  id: string
+  title: string
+  message: string
+  validTill: Date
+  sentToAll: boolean
+  createdAt: Date
+  recipients: NotificationRecipient[]
+}
+
+export interface NotificationRecipient {
+  id: string
+  seenAt?: Date
+  userId: string
+  user: User
+  notificationId: string
+  notification: Notification
 }

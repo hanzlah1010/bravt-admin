@@ -1,20 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import {
-  AlertTriangle,
-  ArrowDown,
-  CheckCheckIcon,
-  RefreshCw
-} from "lucide-react"
-import { useLocation } from "react-router"
-import { formatDate } from "date-fns"
+import * as React from "react"
+import { AlertTriangle, ArrowDown, RefreshCw } from "lucide-react"
 
-import { cn, formatMsgDate } from "@/lib/utils"
+import { formatMsgDate } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
-import { useSessionQuery } from "@/queries/use-session-query"
+import { MessageBubble } from "./message-bubble"
 import { useTicketMessagesQuery } from "@/queries/use-ticket-messages-query"
 
-import { USER_ROLE, type TicketMessage } from "@/types/db"
+import type { TicketMessage } from "@/types/db"
 
 export function TicketMessages() {
   const {
@@ -26,53 +19,69 @@ export function TicketMessages() {
     fetchNextPage
   } = useTicketMessagesQuery()
 
-  const { pathname } = useLocation()
+  const containerRef = React.useRef<HTMLDivElement>(null)
+  const sentinelRef = React.useRef<HTMLDivElement>(null)
+  const initialLoad = React.useRef(true)
+  const [isAtBottom, setIsAtBottom] = React.useState(true)
 
-  const containerRef = useRef<HTMLDivElement>(null)
-  const initialLoad = useRef(true)
-  const [isAtBottom, setIsAtBottom] = useState(true)
-
-  const handleScroll = useCallback(() => {
+  const handleScroll = React.useCallback(() => {
     const container = containerRef.current
     if (!container) return
 
-    if (
-      container.scrollTop - container.scrollHeight + container.clientHeight >=
-      -100
-    ) {
-      setIsAtBottom(true)
-    } else {
-      setIsAtBottom(false)
-    }
+    const isNearBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight <
+      100
 
-    if (container.scrollTop <= 100 && hasNextPage && !isFetchingNextPage) {
-      const previousScrollHeight = container.scrollHeight
-
-      fetchNextPage().then(() => {
-        requestAnimationFrame(() => {
-          if (containerRef.current) {
-            containerRef.current.scrollTop =
-              containerRef.current.scrollHeight - previousScrollHeight
-          }
-        })
-      })
-    }
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage])
-
-  const scrollToBottom = useCallback(() => {
-    const container = containerRef.current
-    if (!container) return
-    container.scrollTo({
-      top: container.scrollHeight,
-      behavior: "smooth"
-    })
+    setIsAtBottom(isNearBottom)
   }, [])
 
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
+  const scrollToBottom = React.useCallback(
+    (behavior: ScrollBehavior = "smooth") => {
+      const container = containerRef.current
+      if (!container) return
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior
+      })
+    },
+    []
+  )
 
-    if (!initialLoad.current) {
+  React.useEffect(() => {
+    const container = containerRef.current
+    const sentinel = sentinelRef.current
+    if (!container || !sentinel) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          const previousScrollHeight = container.scrollHeight
+          fetchNextPage().then(() => {
+            requestAnimationFrame(() => {
+              if (containerRef.current) {
+                container.scrollTop =
+                  container.scrollHeight - previousScrollHeight
+              }
+            })
+          })
+        }
+      },
+      { root: container, rootMargin: "100px" }
+    )
+
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  React.useEffect(() => {
+    const container = containerRef.current
+    if (!container || !data.length) return
+
+    if (initialLoad.current) {
+      scrollToBottom("auto")
+      initialLoad.current = false
+    } else {
       const isNearBottom =
         container.scrollHeight - container.scrollTop - container.clientHeight <
         400
@@ -83,21 +92,13 @@ export function TicketMessages() {
     }
   }, [data, scrollToBottom])
 
-  useEffect(() => {
-    const container = containerRef.current
-    if (container && initialLoad.current && data.length > 0) {
-      container.scrollTop = container.scrollHeight
-      initialLoad.current = false
-    }
-  }, [data])
-
-  useEffect(() => {
+  React.useEffect(() => {
     if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight
     }
-  }, [pathname])
+  }, [])
 
-  const groupedMessages = useMemo(() => {
+  const groupedMessages = React.useMemo(() => {
     return data.reduce<Record<string, TicketMessage[]>>((grouped, msg) => {
       const date = formatMsgDate(msg.createdAt)
       if (!grouped[date]) grouped[date] = []
@@ -135,31 +136,35 @@ export function TicketMessages() {
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="relative size-full flex-1 space-y-8 overflow-y-auto overflow-x-hidden p-4"
+        className="relative flex size-full flex-1 flex-col overflow-y-auto overflow-x-hidden"
       >
+        <div ref={sentinelRef} />
+
         {isFetchingNextPage && (
-          <div className="flex w-full justify-center p-4">
+          <div className="flex w-full items-center justify-center p-4">
             <Spinner />
           </div>
         )}
 
-        {Object.entries(groupedMessages).map(([date, messages]) => (
-          <div key={date} className="space-y-8">
-            <div className="flex w-full items-center">
-              <hr className="h-px w-full flex-1 bg-border outline-none" />
-              <p className="shrink-0 rounded-md bg-border px-3 py-0.5 text-xs text-muted-foreground">
-                {date}
-              </p>
-              <hr className="h-px w-full flex-1 bg-border outline-none" />
-            </div>
+        <div className="mt-auto space-y-8 p-4">
+          {Object.entries(groupedMessages).map(([date, messages]) => (
+            <div key={date} className="space-y-8">
+              <div className="flex w-full items-center">
+                <hr className="h-px w-full flex-1 bg-border outline-none" />
+                <p className="shrink-0 rounded-md bg-border px-3 py-0.5 text-xs text-muted-foreground">
+                  {date}
+                </p>
+                <hr className="h-px w-full flex-1 bg-border outline-none" />
+              </div>
 
-            <ul className="space-y-2">
-              {messages.map((msg) => (
-                <MessageBubble key={msg.id} message={msg} />
-              ))}
-            </ul>
-          </div>
-        ))}
+              <ul className="space-y-2">
+                {messages.map((msg) => (
+                  <MessageBubble key={msg.id} message={msg} />
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
 
       {!isAtBottom && (
@@ -167,66 +172,11 @@ export function TicketMessages() {
           size="icon"
           variant="outline"
           className="absolute inset-x-1/2 bottom-4 size-7 rounded-full bg-card"
-          onClick={scrollToBottom}
+          onClick={() => scrollToBottom()}
         >
           <ArrowDown />
         </Button>
       )}
     </div>
-  )
-}
-
-type MessageBubbleProps = {
-  message: TicketMessage
-}
-
-function MessageBubble({ message }: MessageBubbleProps) {
-  const { user } = useSessionQuery()
-  const isCurrentUserMessage =
-    user.id === message.senderId || message.sender.role === USER_ROLE.ADMIN
-
-  return (
-    <li
-      className={cn(
-        "w-fit max-w-full md:max-w-lg",
-        isCurrentUserMessage ? "ml-auto" : "mr-auto"
-      )}
-    >
-      <p
-        className={cn(
-          "whitespace-pre-wrap break-words rounded-lg px-3 py-1.5 text-sm font-medium md:max-w-lg",
-          isCurrentUserMessage
-            ? "ml-auto bg-primary text-primary-foreground"
-            : "mr-auto bg-muted"
-        )}
-      >
-        {message.message}
-      </p>
-
-      <div
-        className={cn("mt-1 flex items-center gap-2", {
-          "justify-end": !isCurrentUserMessage
-        })}
-      >
-        <p className="text-xs text-muted-foreground">
-          {formatDate(message.createdAt, "hh:mm aa")}
-        </p>
-
-        {isCurrentUserMessage && (
-          <CheckCheckIcon
-            className={cn(
-              "size-3.5",
-              message.seen ? "text-primary" : "text-muted-foreground"
-            )}
-          >
-            <title>
-              {message.seen
-                ? formatDate(message.seen, "PPP hh:mm aa")
-                : "Unseen"}
-            </title>
-          </CheckCheckIcon>
-        )}
-      </div>
-    </li>
   )
 }

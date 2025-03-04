@@ -1,12 +1,21 @@
-import { api } from "@/lib/api"
-import { keepPreviousData, useQuery } from "@tanstack/react-query"
+import { useCallback } from "react"
 import { useParams } from "react-router"
+import {
+  keepPreviousData,
+  useQuery,
+  useQueryClient
+} from "@tanstack/react-query"
+
+import { api } from "@/lib/api"
 
 import type { Ticket } from "@/types/db"
 
-export function useTicketQuery() {
+export function useTicketQuery(enabled = true) {
+  const queryClient = useQueryClient()
   const { ticketId } = useParams()
+
   const { data, ...query } = useQuery({
+    enabled,
     queryKey: ["ticket", ticketId],
     placeholderData: keepPreviousData,
     queryFn: async () => {
@@ -15,5 +24,15 @@ export function useTicketQuery() {
     }
   })
 
-  return { ticket: data as Ticket, ...query }
+  const updateTicket = useCallback(
+    (newTicket: Ticket) => {
+      queryClient.setQueryData<Ticket>(["ticket", newTicket.id], (prev) => {
+        if (!prev) return prev
+        return { ...prev, ...newTicket }
+      })
+    },
+    [queryClient]
+  )
+
+  return { ticket: data as Ticket, updateTicket, ...query }
 }

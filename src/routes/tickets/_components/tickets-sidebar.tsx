@@ -1,4 +1,4 @@
-import { ArrowLeft, CirclePlus } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { Link, useLocation, useParams } from "react-router"
 import { parseAsBoolean, useQueryState } from "nuqs"
 
@@ -6,12 +6,6 @@ import { TicketsList } from "./tickets-list"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useDebouncedQueryState } from "@/hooks/use-debounced-query-state"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from "@/components/ui/tooltip"
-
 import {
   Sidebar,
   SidebarContent,
@@ -36,34 +30,18 @@ export function TicketsSidebar() {
   return (
     <Sidebar showMobileSheet={isTicketDetails}>
       <SidebarHeader className="p-0 pt-3">
-        <div className="flex items-center justify-between px-3">
-          <div className="flex items-center gap-2">
-            <Button
-              asChild
-              variant="ghost"
-              size="icon"
-              className="size-7 rounded-full"
-            >
-              <Link to="/">
-                <ArrowLeft />
-              </Link>
-            </Button>
-            <h1 className="text-lg font-semibold">Tickets</h1>
-          </div>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                size="icon"
-                variant="outline"
-                className="size-7"
-                aria-label="Open Ticket"
-              >
-                <CirclePlus />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Open Ticket</TooltipContent>
-          </Tooltip>
+        <div className="flex items-center gap-2 px-3">
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="size-7 rounded-full"
+          >
+            <Link to="/">
+              <ArrowLeft />
+            </Link>
+          </Button>
+          <h1 className="text-lg font-semibold">Tickets</h1>
         </div>
 
         <div className="px-3">

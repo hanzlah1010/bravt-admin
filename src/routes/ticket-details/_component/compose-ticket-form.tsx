@@ -3,30 +3,35 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { SendHorizontalIcon } from "lucide-react"
 import { useParams } from "react-router"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 
 import { api } from "@/lib/api"
+import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { getErrorMessage } from "@/lib/error"
 import { useTicketQuery } from "@/queries/use-ticket-query"
 import { useTicketsQuery } from "@/queries/use-tickets-query"
+import { useTicketMessagesQuery } from "@/queries/use-ticket-messages-query"
 
 import type { TicketMessage } from "@/types/db"
-import type { InfiniteData } from "@tanstack/react-query"
-import type { MessagesWithCursor } from "@/queries/use-ticket-messages-query"
 
 export function ComposeTicketForm() {
   const { ticket } = useTicketQuery()
 
   if (ticket.closed) {
     return (
-      <div className="shrink-0 gap-1 border-t p-4 text-center text-sm">
-        <span className="text-muted-foreground">
-          This ticket has been closed. If something went missing you can
-        </span>{" "}
-        <Button variant="link" className="size-fit p-0">
-          Reopen this ticket
-        </Button>
+      <div className="flex min-h-[73px] shrink-0 items-center justify-center gap-1 border-t p-4 text-center text-sm">
+        <div className="">
+          <span className="text-muted-foreground">
+            This ticket has been closed. If something went missing you can
+          </span>{" "}
+          <Label
+            htmlFor={"close-ticket"}
+            className="cursor-pointer whitespace-nowrap text-primary underline underline-offset-4 transition-colors hover:text-primary/80"
+          >
+            Reopen this ticket
+          </Label>
+        </div>
       </div>
     )
   }
@@ -35,38 +40,25 @@ export function ComposeTicketForm() {
 }
 
 function Form() {
-  const queryClient = useQueryClient()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [message, setMessage] = useState("")
 
   const { ticketId } = useParams()
   const { updateTicket } = useTicketsQuery(false)
+  const { addMessage } = useTicketMessagesQuery(false)
 
   const { mutate: sendMessage, isPending } = useMutation({
     mutationFn: async () => {
-      const { data } = await api.post<TicketMessage>(`/tickets/${ticketId}`, {
-        message
-      })
+      const { data } = await api.post<TicketMessage>(
+        `/tickets/message/${ticketId}`,
+        { message }
+      )
       return data
     },
     onSuccess: (message) => {
       setMessage("")
-      queryClient.setQueryData<InfiniteData<MessagesWithCursor>>(
-        ["ticket-messages", ticketId],
-        (prev) => {
-          if (!prev) return { pages: [{ messages: [message] }], pageParams: [] }
-
-          const newData = [...prev.pages]
-          newData[0] = {
-            ...newData[0],
-            messages: [message, ...newData[0].messages]
-          }
-
-          return { ...prev, pages: newData }
-        }
-      )
-
-      updateTicket(message.ticketId, { createdAt: message.createdAt })
+      addMessage(message)
+      updateTicket(message.ticketId, { lastMessageAt: message.createdAt })
     },
     onError: (error) => toast.error(getErrorMessage(error)),
     onSettled: () => setTimeout(() => textareaRef.current?.focus(), 50)
@@ -97,7 +89,7 @@ function Form() {
 
   useEffect(() => {
     textareaRef.current?.focus()
-  }, [])
+  }, [ticketId])
 
   return (
     <form

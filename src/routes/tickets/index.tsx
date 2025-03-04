@@ -1,6 +1,5 @@
-import { PlusCircle, TicketIcon } from "lucide-react"
+import { TicketIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { useSidebar } from "@/components/ui/sidebar"
 
 export default function Tickets() {
@@ -14,12 +13,8 @@ export default function Tickets() {
     <div className="hidden h-full flex-col items-center justify-center gap-2 p-4 md:flex">
       <TicketIcon className="size-8 text-muted-foreground" />
       <h1 className="text-center text-lg font-semibold text-foreground/80">
-        Select a ticket or open a new one!
+        Select a ticket from the side menu!
       </h1>
-      <Button>
-        <PlusCircle />
-        Open Ticket
-      </Button>
     </div>
   )
 }

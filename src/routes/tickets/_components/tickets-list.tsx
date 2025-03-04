@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router"
-import { AlertTriangle, CirclePlus, RefreshCw } from "lucide-react"
+import { AlertTriangle, RefreshCw } from "lucide-react"
 import { format } from "date-fns"
+import { parseAsBoolean, useQueryState } from "nuqs"
 
 import { Button } from "@/components/ui/button"
 import { useTicketsQuery } from "@/queries/use-tickets-query"
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/sidebar"
 
 export function TicketsList() {
+  const [closed] = useQueryState("closed", parseAsBoolean)
   const { pathname } = useLocation()
   const { data, isPending, error, refetch, updateTicket, ...query } =
     useTicketsQuery()
@@ -59,10 +61,6 @@ export function TicketsList() {
       <SidebarMenu className="flex h-full flex-col items-center justify-center gap-2">
         <AlertTriangle className="size-5 text-muted-foreground" />
         <p className="text-center text-sm">No tickets found.</p>
-        <Button size="sm" variant="outline">
-          <CirclePlus />
-          Open New
-        </Button>
       </SidebarMenu>
     )
   }
@@ -73,13 +71,17 @@ export function TicketsList() {
         <SidebarMenuItem key={ticket.id}>
           <SidebarMenuButton
             asChild
+            key={ticket.id}
             className="h-auto"
             isActive={pathname === `/tickets/${ticket.id}`}
           >
             <Link
-              to={`/tickets/${ticket.id}`}
-              title={`${ticket.user.firstName ? `${ticket.user.firstName} ${ticket.user.lastName}\n` : ""}${ticket.user.email}\n${ticket.topic}\n${format(ticket.lastMessageAt ?? ticket.createdAt, "PPP hh:mm aa")}`}
               onClick={() => updateTicket(ticket.id, { unseenMessages: 0 })}
+              title={`${ticket.user.firstName ? `${ticket.user.firstName} ${ticket.user.lastName}\n` : ""}${ticket.user.email}\n${ticket.topic}\n${format(ticket.lastMessageAt ?? ticket.createdAt, "PPP hh:mm aa")}`}
+              to={{
+                pathname: `/tickets/${ticket.id}`,
+                search: closed ? "?closed=true" : ""
+              }}
             >
               <Avatar>
                 <AvatarFallback className="bg-muted-foreground/20">
