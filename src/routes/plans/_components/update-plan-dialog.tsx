@@ -45,7 +45,10 @@ export default function UpdatePlanDialog({
   const defaultValues = plan
     ? {
         hourlyCost: Number(plan?.instanceCost),
-        backupCost: Number(plan?.backupCost)
+        backupCost: Number(plan?.backupCost),
+        promotionalPrice: plan?.promotionalPrice
+          ? Number(plan?.promotionalPrice)
+          : null
       }
     : {}
 
@@ -117,6 +120,28 @@ export default function UpdatePlanDialog({
                   </FormLabel>
                   <FormControl>
                     <NumberInput placeholder="0.01" prefix="$ " {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="promotionalPrice"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Promotional Price{" "}
+                    <sub className="text-muted-foreground">(Per Hour)</sub>
+                  </FormLabel>
+                  <FormControl>
+                    <NumberInput
+                      placeholder="0.028"
+                      prefix="$ "
+                      nullable
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -1,10 +1,9 @@
-import { Link } from "react-router"
-import { BellPlusIcon } from "lucide-react"
+import { PlusCircleIcon } from "lucide-react"
 
-import { AppHeader } from "@/components/app-header"
 import { Button } from "@/components/ui/button"
-import { NotificationsTable } from "./_components/notifications-table"
-import { DateRangePicker } from "@/components/date-range-picker"
+import { AppHeader } from "@/components/app-header"
+import { useCreateAPIKeyModal } from "@/hooks/use-create-api-key-modal"
+import { APIKeysTable } from "./_components/api-keys-table"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,7 +13,9 @@ import {
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb"
 
-export default function Notifications() {
+export default function ApiKeys() {
+  const onOpen = useCreateAPIKeyModal((s) => s.onOpen)
+
   return (
     <div className="space-y-3 px-6 pb-4">
       <AppHeader>
@@ -25,7 +26,7 @@ export default function Notifications() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Notifications</BreadcrumbPage>
+              <BreadcrumbPage>API Keys</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -33,22 +34,15 @@ export default function Notifications() {
 
       <div className="flex items-center justify-between gap-3">
         <h1 className="font-serif text-3xl font-medium md:text-4xl">
-          Notifications
+          API Keys
         </h1>
-        <Button asChild size="sm">
-          <Link to="/notifications/create">
-            <BellPlusIcon />
-            New Notification
-          </Link>
+        <Button size="sm" onClick={onOpen}>
+          <PlusCircleIcon />
+          New API Key
         </Button>
       </div>
 
-      <DateRangePicker
-        triggerClassName="min-w-[14.5rem] w-auto ml-auto"
-        align="end"
-      />
-
-      <NotificationsTable />
+      <APIKeysTable />
     </div>
   )
 }

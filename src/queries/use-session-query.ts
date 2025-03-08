@@ -13,5 +13,7 @@ export function useSessionQuery() {
     }
   })
 
+  console.log(data)
+
   return { user: data as User, ...query }
 }

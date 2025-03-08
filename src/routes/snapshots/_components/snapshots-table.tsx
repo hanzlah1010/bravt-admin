@@ -65,6 +65,7 @@ export function SnapshotsTable() {
         shrinkZero
         columnCount={5}
         searchableColumnCount={1}
+        filterableColumnCount={1}
         cellWidths={["8rem", "12rem", "12rem", "12rem", "8rem"]}
         withPagination={false}
       />

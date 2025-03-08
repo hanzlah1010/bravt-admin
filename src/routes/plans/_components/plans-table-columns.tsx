@@ -94,6 +94,28 @@ export function getColumns({
       }
     },
     {
+      accessorKey: "promotionalPrice",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Promotional Price" />
+      ),
+      cell: ({ row }) => {
+        if (!row.original.promotionalPrice) {
+          return <p className="text-sm italic text-muted-foreground">N/A</p>
+        }
+
+        return (
+          <div className="flex flex-col space-y-0.5">
+            <span className="text-sm font-medium">
+              {formatPrice(Number(row.original.promotionalPrice) * 24 * 30)}/mo
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {formatPrice(row.original.promotionalPrice)}/hr
+            </span>
+          </div>
+        )
+      }
+    },
+    {
       accessorKey: "createdAt",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Created At" />

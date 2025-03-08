@@ -4,10 +4,11 @@ import { Route, Routes } from "react-router"
 import { USER_ROLE } from "@/types/db"
 import { TicketsLayout } from "@/routes/tickets/layout"
 import { MainLayout } from "@/components/main-layout"
-import { useSessionQuery } from "@/queries/use-session-query"
 import { Spinner } from "@/components/ui/spinner"
 import { SocketProvider, Sockets } from "@/providers/socket-provider"
 import { NotFound } from "@/routes/not-found"
+import { useSessionQuery } from "@/queries/use-session-query"
+import { useApiKeysQuery } from "@/queries/use-api-keys-query"
 
 const Analytics = lazy(() => import("@/routes/analytics"))
 const Plans = lazy(() => import("@/routes/plans"))
@@ -23,11 +24,13 @@ const Tickets = lazy(() => import("@/routes/tickets"))
 const TicketDetails = lazy(() => import("@/routes/ticket-details"))
 const Notifications = lazy(() => import("@/routes/notifications"))
 const CreateNotification = lazy(() => import("@/routes/create-notification"))
+const ApiKeys = lazy(() => import("@/routes/api-keys"))
 
 export function App() {
   const { user, isPending } = useSessionQuery()
+  const { isPending: isFetchingApiKeys } = useApiKeysQuery()
 
-  if (isPending) {
+  if (isPending || isFetchingApiKeys) {
     return (
       <div className="flex h-svh w-full items-center justify-center">
         <Spinner />
@@ -55,6 +58,7 @@ export function App() {
           <Route path="/firewall-groups" element={<FirewallGroups />} />
           <Route path="/snapshots" element={<Snapshots />} />
           <Route path="/instances" element={<Instances />} />
+          <Route path="/api-keys" element={<ApiKeys />} />
           <Route path="/notifications">
             <Route index element={<Notifications />} />
             <Route path="create" element={<CreateNotification />} />

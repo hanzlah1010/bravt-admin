@@ -15,7 +15,8 @@ export type VultrInstance = {
   hostname: string
   date_created: string
   power_status: "running" | "stopped"
-  server_status: "locked" | "active"
+  status: "locked" | "active"
+  server_status: "installingbooting" | "ok"
   default_password?: string
   features: string[]
 }

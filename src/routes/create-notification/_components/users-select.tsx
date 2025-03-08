@@ -1,6 +1,6 @@
 import * as React from "react"
 import { XIcon } from "lucide-react"
-import { useInfiniteQuery } from "@tanstack/react-query"
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query"
 
 import { api } from "@/lib/api"
 import { Spinner } from "@/components/ui/spinner"
@@ -37,6 +37,7 @@ export function UsersSelect({ field, disabled }: UsersSelectProps) {
 
   const { data, isPending, ...query } = useInfiniteQuery({
     queryKey: ["users-select", search],
+    placeholderData: keepPreviousData,
     queryFn: async ({ pageParam = 1 }) => {
       const { data } = await api.get<{ pageCount: number; users: User[] }>(
         `/admin/user?page=${pageParam}${search?.trim() ? `&search=${search}` : ""}`
@@ -126,8 +127,12 @@ export function UsersSelect({ field, disabled }: UsersSelectProps) {
           />
 
           <CommandList>
-            <CommandEmpty className="flex w-full items-center justify-center">
-              {isPending ? <Spinner size="sm" /> : "No user found."}
+            <CommandEmpty>
+              {isPending ? (
+                <Spinner size="sm" className="mx-auto" />
+              ) : (
+                "No user found."
+              )}
             </CommandEmpty>
 
             <CommandGroup>
@@ -144,7 +149,9 @@ export function UsersSelect({ field, disabled }: UsersSelectProps) {
                 </CommandItem>
               ))}
             </CommandGroup>
-            <InfiniteScroll {...query} />
+            <CommandGroup>
+              <InfiniteScroll key={users.length} {...query} />
+            </CommandGroup>
           </CommandList>
         </Command>
       </PopoverContent>

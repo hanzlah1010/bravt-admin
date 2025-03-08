@@ -119,6 +119,7 @@ export interface Plan {
   hourlyCost: number
   monthlyCost: number
   backupCost: number
+  promotionalPrice: number | null
   createdAt: Date
 }
 
@@ -200,4 +201,11 @@ export interface NotificationRecipient {
   user: User
   notificationId: string
   notification: Notification
+}
+
+export interface ApiKey {
+  id: string
+  key: string
+  name: string
+  active: boolean
 }

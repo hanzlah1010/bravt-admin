@@ -1,4 +1,4 @@
-import { lazy, useState } from "react"
+import { lazy, useState, Suspense } from "react"
 import { toast } from "sonner"
 import { formatDate } from "date-fns"
 import { CheckCheckIcon, Copy, EllipsisVertical, Trash2 } from "lucide-react"
@@ -104,11 +104,13 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         </DropdownMenu>
       </li>
 
-      <DeleteMessageDialog
-        id={message.id}
-        open={deleteDialogOpen}
-        onOpenChange={setDeleteDialogOpen}
-      />
+      <Suspense>
+        <DeleteMessageDialog
+          id={message.id}
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+        />
+      </Suspense>
     </>
   )
 }

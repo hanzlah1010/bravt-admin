@@ -46,6 +46,7 @@ export function useTicketMessageSocket() {
                 className="ml-auto h-6 px-2 text-xs"
                 onClick={() => {
                   navigate(path)
+                  updateTicket(message.ticketId, { unseenMessages: 0 })
                   toast.dismiss(message.id)
                 }}
               >

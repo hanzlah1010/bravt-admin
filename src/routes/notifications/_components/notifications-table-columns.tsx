@@ -79,7 +79,9 @@ export function getColumns({
       ),
       cell: ({ row }) => (
         <span className="whitespace-nowrap">
-          {row.original._count.recipients}
+          {row.original.sentToAll
+            ? `All (${row.original._count.recipients})`
+            : row.original._count.recipients}
         </span>
       )
     },

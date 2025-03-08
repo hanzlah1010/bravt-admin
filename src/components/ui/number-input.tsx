@@ -5,7 +5,10 @@ import { Input } from "@/components/ui/input"
 
 import type { NumericFormatProps } from "react-number-format"
 
-const NumberInput = React.forwardRef<HTMLInputElement, NumericFormatProps>(
+const NumberInput = React.forwardRef<
+  HTMLInputElement,
+  NumericFormatProps & { nullable?: boolean }
+>(
   (
     {
       onChange,
@@ -13,6 +16,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumericFormatProps>(
       allowNegative = false,
       min = 0,
       decimalScale = 3,
+      nullable = false,
       ...props
     },
     ref
@@ -28,8 +32,15 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumericFormatProps>(
         autoComplete="off"
         onValueChange={({ floatValue }) => {
           if (onChange) {
-            const event = { target: { value: Number(floatValue) } }
-            onChange(event as unknown as React.ChangeEvent<HTMLInputElement>)
+            onChange({
+              target: {
+                value: isNaN(Number(floatValue))
+                  ? nullable
+                    ? null
+                    : undefined
+                  : Number(floatValue)
+              }
+            } as unknown as React.ChangeEvent<HTMLInputElement>)
           }
         }}
         {...props}

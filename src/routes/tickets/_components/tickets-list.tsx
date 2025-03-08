@@ -115,7 +115,7 @@ export function TicketsList() {
         </SidebarMenuItem>
       ))}
 
-      <InfiniteScroll {...query} />
+      <InfiniteScroll key={data.length} {...query} />
     </SidebarMenu>
   )
 }

@@ -1,4 +1,4 @@
-import { lazy } from "react"
+import { lazy, Suspense } from "react"
 import { PlusCircleIcon } from "lucide-react"
 
 import { AppHeader } from "@/components/app-header"
@@ -21,7 +21,9 @@ export default function Plans() {
 
   return (
     <>
-      <CreatePlanDialog />
+      <Suspense>
+        <CreatePlanDialog />
+      </Suspense>
       <div className="space-y-3 px-6 pb-4">
         <AppHeader>
           <Breadcrumb>
@@ -39,9 +41,9 @@ export default function Plans() {
 
         <div className="flex items-center justify-between">
           <h1 className="font-serif text-3xl font-medium md:text-4xl">Plans</h1>
-          <Button variant="outline" onClick={onOpen}>
+          <Button size="sm" onClick={onOpen}>
             <PlusCircleIcon />
-            Create Plan
+            New Plan
           </Button>
         </div>
 

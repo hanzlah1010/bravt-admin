@@ -54,7 +54,10 @@ export default function CreatePlanDialog() {
   const { open, onOpenChange } = usePlanModal()
 
   const form = useForm<CreatePlanSchema>({
-    resolver: zodResolver(createPlanSchema)
+    resolver: zodResolver(createPlanSchema),
+    defaultValues: {
+      promotionalPrice: null
+    }
   })
 
   const { isPending, mutate: createPlan } = useMutation({
@@ -96,7 +99,7 @@ export default function CreatePlanDialog() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Instance Cost{" "}
+                    Instance Selling Price{" "}
                     <sub className="text-muted-foreground">(Per Hour)</sub>
                   </FormLabel>
                   <FormControl>
@@ -118,6 +121,28 @@ export default function CreatePlanDialog() {
                   </FormLabel>
                   <FormControl>
                     <NumberInput placeholder="0.01" prefix="$ " {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="promotionalPrice"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Promotional Price{" "}
+                    <sub className="text-muted-foreground">(Per Hour)</sub>
+                  </FormLabel>
+                  <FormControl>
+                    <NumberInput
+                      placeholder="0.028"
+                      prefix="$ "
+                      nullable
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -53,6 +53,14 @@ interface DataTableProps<TData> extends React.HTMLAttributes<HTMLDivElement> {
    * @example status={"pending"}
    */
   error?: Error | null
+
+  /**
+   * Event handler called when a row is clicked
+   * @default undefined
+   * @type (data: TData[number]) => void | undefined
+   * @example onRowClick={(data) => navigate(data.id)}
+   */
+  onRowClick?: (data: TData) => void
 }
 
 export function DataTable<TData>({
@@ -60,6 +68,7 @@ export function DataTable<TData>({
   children,
   className,
   error,
+  onRowClick,
   floatingBar = null,
   withPagination = true,
   isStripped = false,
@@ -94,7 +103,7 @@ export function DataTable<TData>({
                       key={header.id}
                       colSpan={header.colSpan}
                       className={cn({
-                        "first:pl-9": isStripped,
+                        "first:pl-4": isStripped || !withPagination,
                         "first:rounded-l-lg last:rounded-r-lg":
                           isStripped && hasRows
                       })}
@@ -131,14 +140,16 @@ export function DataTable<TData>({
                     <TableCell
                       key={cell.id}
                       onClick={(e) => {
+                        if (onRowClick) return onRowClick(row.original)
                         if (!withPagination || isStripped) return
                         if (e.target === e.currentTarget) {
                           row.toggleSelected()
                         }
                       }}
                       className={cn({
-                        "first:rounded-l-lg first:pl-9 last:rounded-r-lg":
-                          isStripped
+                        "cursor-pointer": !!onRowClick,
+                        "first:pl-4": isStripped || !withPagination,
+                        "first:rounded-l-lg last:rounded-r-lg": isStripped
                       })}
                       style={{
                         ...getCommonPinningStyles({ column: cell.column })

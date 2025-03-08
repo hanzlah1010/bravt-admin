@@ -94,6 +94,7 @@ export default function UpdateSSHKeyDialog({
             <FormField
               control={form.control}
               name="name"
+              disabled={isPending}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
@@ -108,6 +109,7 @@ export default function UpdateSSHKeyDialog({
             <FormField
               control={form.control}
               name="key"
+              disabled={isPending}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>SSH Key</FormLabel>

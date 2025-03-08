@@ -11,6 +11,7 @@ import {
 import type { UseQueryStatesKeysMap, Values } from "nuqs"
 import type { ClassValue } from "clsx"
 import type { User } from "@/types/db"
+import type { VultrInstance } from "@/types/vultr"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -78,4 +79,17 @@ export function formatMsgDate(date: Date) {
   if (isYesterday(date)) return "Yesterday"
   if (differenceInCalendarDays(today, date) < 7) return format(date, "EEEE")
   return format(date, "dd/MM/yyyy")
+}
+
+export function isInstanceInstalling(instance: VultrInstance) {
+  if (
+    (instance?.server_status !== "ok" &&
+      instance?.server_status !== "installingbooting") ||
+    instance?.status !== "active" ||
+    !["running", "stopped"].includes(instance?.power_status)
+  ) {
+    return true
+  } else {
+    return false
+  }
 }

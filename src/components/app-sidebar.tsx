@@ -9,11 +9,13 @@ import {
   HeadsetIcon
 } from "lucide-react"
 
+import { APIKeySwitcher } from "./api-key-switcher"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -90,6 +92,10 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
+      <SidebarHeader>
+        <APIKeySwitcher />
+      </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
