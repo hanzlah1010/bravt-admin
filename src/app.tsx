@@ -26,6 +26,7 @@ const Notifications = lazy(() => import("@/routes/notifications"))
 const CreateNotification = lazy(() => import("@/routes/create-notification"))
 const ApiKeys = lazy(() => import("@/routes/api-keys"))
 const Impersonation = lazy(() => import("@/routes/impersonation"))
+const GlobalSnapshots = lazy(() => import("@/routes/global-snapshots"))
 
 export function App() {
   const { user, isPending } = useSessionQuery()
@@ -39,7 +40,7 @@ export function App() {
   }
 
   if (!user || user.role !== USER_ROLE.ADMIN) {
-    if (user.impersonatedBy) {
+    if (user?.impersonatedBy) {
       return (
         <Suspense fallback={<PageSpinner />}>
           <Impersonation />
@@ -67,6 +68,7 @@ export function App() {
           <Route path="/snapshots" element={<Snapshots />} />
           <Route path="/instances" element={<Instances />} />
           <Route path="/api-keys" element={<ApiKeys />} />
+          <Route path="/global-snapshots" element={<GlobalSnapshots />} />
           <Route path="/notifications">
             <Route index element={<Notifications />} />
             <Route path="create" element={<CreateNotification />} />

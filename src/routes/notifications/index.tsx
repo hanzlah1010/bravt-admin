@@ -32,7 +32,7 @@ export default function Notifications() {
       </AppHeader>
 
       <div className="flex items-center justify-between gap-3">
-        <h1 className="font-serif text-3xl font-medium md:text-4xl">
+        <h1 className="whitespace-nowrap font-serif text-3xl font-medium md:text-4xl">
           Notifications
         </h1>
         <Button asChild size="sm">

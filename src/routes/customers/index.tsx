@@ -28,7 +28,7 @@ export default function Customers() {
       </AppHeader>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="font-serif text-3xl font-medium md:text-4xl">
+        <h1 className="whitespace-nowrap font-serif text-3xl font-medium md:text-4xl">
           Customers
         </h1>
         <DateRangePicker triggerClassName="min-w-[14.5rem]" align="end" />

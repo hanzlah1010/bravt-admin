@@ -1,10 +1,10 @@
-import { lazy, Suspense } from "react"
-import { PlusCircleIcon } from "lucide-react"
+import { lazy } from "react"
+import { PlusCircle } from "lucide-react"
 
-import { AppHeader } from "@/components/app-header"
-import { PlansTable } from "./_components/plans-table"
 import { Button } from "@/components/ui/button"
-import { usePlanModal } from "@/hooks/use-plan-modal"
+import { AppHeader } from "@/components/app-header"
+import { SnapshotsTable } from "./_components/snapshots-table"
+import { useCreateGlobalSnapshotModal } from "@/hooks/use-create-global-snapshot-modal"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,16 +14,16 @@ import {
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb"
 
-const CreatePlanDialog = lazy(() => import("./_components/create-plan-dialog"))
+const CreateGlobalSnapshotDialog = lazy(
+  () => import("./_components/create-global-snapshot-dialog")
+)
 
-export default function Plans() {
-  const { onOpen } = usePlanModal()
+export default function GlobalSnapshots() {
+  const { onOpen } = useCreateGlobalSnapshotModal()
 
   return (
     <>
-      <Suspense>
-        <CreatePlanDialog />
-      </Suspense>
+      <CreateGlobalSnapshotDialog />
       <div className="space-y-3 px-6 pb-4">
         <AppHeader>
           <Breadcrumb>
@@ -33,23 +33,23 @@ export default function Plans() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Plans</BreadcrumbPage>
+                <BreadcrumbPage>Global Snapshots</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </AppHeader>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <h1 className="whitespace-nowrap font-serif text-3xl font-medium md:text-4xl">
-            Plans
+            Global Snapshots
           </h1>
           <Button size="sm" onClick={onOpen}>
-            <PlusCircleIcon />
-            New Plan
+            <PlusCircle />
+            New Snapshot
           </Button>
         </div>
 
-        <PlansTable />
+        <SnapshotsTable />
       </div>
     </>
   )

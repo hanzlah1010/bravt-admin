@@ -48,7 +48,8 @@ const items = [
       { label: "Snapshots", url: "/snapshots" },
       { label: "Firewalls", url: "/firewall-groups" },
       { label: "SSH Keys", url: "/ssh-keys" },
-      { label: "ISO", url: "/iso" }
+      { label: "ISO", url: "/iso" },
+      { label: "Global Snapshots", url: "/global-snapshots" }
     ]
   },
   {
