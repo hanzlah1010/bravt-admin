@@ -1,22 +1,23 @@
 import { Suspense } from "react"
 import { Outlet } from "react-router"
 
-import { Spinner } from "@/components/ui/spinner"
+import { PageSpinner } from "@/components/page-spinner"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { useApiKeysQuery } from "@/queries/use-api-keys-query"
 
 export function MainLayout() {
+  const { isPending } = useApiKeysQuery()
+
+  if (isPending) {
+    return <PageSpinner />
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset className="overflow-x-hidden">
-        <Suspense
-          fallback={
-            <div className="flex h-svh items-center justify-center">
-              <Spinner size="lg" />
-            </div>
-          }
-        >
+        <Suspense fallback={<PageSpinner />}>
           <Outlet />
         </Suspense>
       </SidebarInset>

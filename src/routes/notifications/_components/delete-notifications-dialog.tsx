@@ -5,7 +5,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { api } from "@/lib/api"
 import { handleError } from "@/lib/error"
 import { Button } from "@/components/ui/button"
-import { useControllableState } from "@/hooks/use-controllable-state"
 import {
   AlertDialog,
   AlertDialogDescription,
@@ -32,13 +31,9 @@ export default function DeleteNotificationsDialog({
   notifications,
   onSuccess,
   showTrigger = false,
-  ...props
+  open,
+  onOpenChange
 }: DeleteNotificationsDialogProps) {
-  const [open, onOpenChange] = useControllableState({
-    prop: props.open,
-    onChange: props.onOpenChange
-  })
-
   const queryClient = useQueryClient()
 
   const { isPending, mutate: deleteNotifications } = useMutation({
@@ -58,7 +53,7 @@ export default function DeleteNotificationsDialog({
       onSuccess?.()
     },
     onError: handleError,
-    onSettled: () => onOpenChange(false)
+    onSettled: onOpenChange
   })
 
   return (

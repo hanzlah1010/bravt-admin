@@ -8,12 +8,12 @@ export function useSessionQuery() {
   const { data, ...query } = useQuery({
     queryKey: ["session"],
     queryFn: async () => {
-      const { data } = await api.get<User>("/auth/session")
+      const { data } = await api.get<User & { impersonatedBy?: string }>(
+        "/auth/session"
+      )
       return data
     }
   })
 
-  console.log(data)
-
-  return { user: data as User, ...query }
+  return { user: data as NonNullable<typeof data>, ...query }
 }

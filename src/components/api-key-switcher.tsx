@@ -5,6 +5,7 @@ import logo from "@/assets/logo.png"
 import { useApiKeysQuery } from "@/queries/use-api-keys-query"
 import { useCreateAPIKeyModal } from "@/hooks/use-create-api-key-modal"
 import { useActiveAPIKey } from "@/hooks/use-active-api-key"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,9 +28,13 @@ const CreateAPIKeyDialog = lazy(
 
 export function APIKeySwitcher() {
   const onCreate = useCreateAPIKeyModal((s) => s.onOpen)
-  const { data } = useApiKeysQuery(false)
+  const { data, isPending } = useApiKeysQuery(false)
   const { isMobile } = useSidebar()
   const { activeKey, setActiveKey } = useActiveAPIKey()
+
+  if (isPending) {
+    return <Skeleton className="h-12 w-full" />
+  }
 
   return (
     <>

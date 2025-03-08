@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { getErrorMessage } from "@/lib/error"
 import { useApiKeysQuery } from "@/queries/use-api-keys-query"
 import { Button } from "@/components/ui/button"
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import {
   Table,
   TableBody,
@@ -20,13 +21,25 @@ const DeleteAPIKeyDialog = lazy(() => import("./delete-api-key-dialog"))
 const UpdateAPIKeyDialog = lazy(() => import("./update-api-key-dialog"))
 
 export function APIKeysTable() {
-  const { data, error } = useApiKeysQuery(false)
+  const { data, error, isPending } = useApiKeysQuery(false)
   const [rowAction, setRowAction] = useState<{
     type: "delete" | "update"
     key: ApiKey
   } | null>(null)
 
   const hasActiveKeys = useMemo(() => data?.some((key) => key.active), [data])
+
+  if (isPending) {
+    return (
+      <DataTableSkeleton
+        shrinkZero
+        columnCount={5}
+        searchableColumnCount={0}
+        filterableColumnCount={0}
+        cellWidths={["8rem", "12rem", "12rem", "12rem", "8rem"]}
+      />
+    )
+  }
 
   return (
     <>

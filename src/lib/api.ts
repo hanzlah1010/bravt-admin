@@ -63,7 +63,7 @@ api.interceptors.response.use(
   }
 )
 
-function setAccessToken(token: string) {
+export function setAccessToken(token: string) {
   api.defaults.headers.common["Authorization"] = `Bearer ${token}`
   cookies.set("access_token", token, {
     path: "/",

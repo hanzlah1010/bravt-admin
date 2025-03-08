@@ -72,9 +72,12 @@ export function InstancesTable() {
       table={table}
       withPagination={false}
       error={error}
-      onRowClick={(instance) =>
-        (window.location.href = `${import.meta.env.VITE_CONSOLE_URL}/instance/${instance.id}`)
-      }
+      onRowClick={(instance) => {
+        window.open(
+          `${import.meta.env.VITE_CONSOLE_URL}/instance/${instance.id}`,
+          "_blank"
+        )
+      }}
     >
       <DataTableToolbar table={table} filterFields={filterFields}>
         <InstancesTableToolbarActions table={table} />

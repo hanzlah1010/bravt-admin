@@ -1,4 +1,4 @@
-import { lazy } from "react"
+import { lazy, Suspense } from "react"
 import { Route, Routes } from "react-router"
 
 import { USER_ROLE } from "@/types/db"
@@ -8,7 +8,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { SocketProvider, Sockets } from "@/providers/socket-provider"
 import { NotFound } from "@/routes/not-found"
 import { useSessionQuery } from "@/queries/use-session-query"
-import { useApiKeysQuery } from "@/queries/use-api-keys-query"
+import { PageSpinner } from "@/components/page-spinner"
 
 const Analytics = lazy(() => import("@/routes/analytics"))
 const Plans = lazy(() => import("@/routes/plans"))
@@ -25,12 +25,12 @@ const TicketDetails = lazy(() => import("@/routes/ticket-details"))
 const Notifications = lazy(() => import("@/routes/notifications"))
 const CreateNotification = lazy(() => import("@/routes/create-notification"))
 const ApiKeys = lazy(() => import("@/routes/api-keys"))
+const Impersonation = lazy(() => import("@/routes/impersonation"))
 
 export function App() {
   const { user, isPending } = useSessionQuery()
-  const { isPending: isFetchingApiKeys } = useApiKeysQuery()
 
-  if (isPending || isFetchingApiKeys) {
+  if (isPending) {
     return (
       <div className="flex h-svh w-full items-center justify-center">
         <Spinner />
@@ -39,6 +39,14 @@ export function App() {
   }
 
   if (!user || user.role !== USER_ROLE.ADMIN) {
+    if (user.impersonatedBy) {
+      return (
+        <Suspense fallback={<PageSpinner />}>
+          <Impersonation />
+        </Suspense>
+      )
+    }
+
     window.location.replace(import.meta.env.VITE_CONSOLE_URL)
     return null
   }

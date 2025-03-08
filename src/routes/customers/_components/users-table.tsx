@@ -12,6 +12,9 @@ import type { DataTableFilterField, DataTableRowAction } from "@/types"
 import type { User } from "@/types/db"
 
 const DeleteUsersDialog = React.lazy(() => import("./delete-users-dialog"))
+const ImpersonateUserDialog = React.lazy(
+  () => import("./impersonate-user-dialog")
+)
 
 export function UsersTable() {
   const { data, pageCount, error, isPending } = useUsersQuery()
@@ -80,6 +83,11 @@ export function UsersTable() {
           open={rowAction?.type === "delete"}
           onOpenChange={() => setRowAction(null)}
           users={rowAction?.row.original ? [rowAction.row.original] : undefined}
+        />
+        <ImpersonateUserDialog
+          open={rowAction?.type === "update"}
+          onOpenChange={() => setRowAction(null)}
+          user={rowAction?.row.original}
         />
       </React.Suspense>
     </>
