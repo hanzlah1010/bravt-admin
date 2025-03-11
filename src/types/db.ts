@@ -1,3 +1,6 @@
+// AUTO GENERATED FILE BY @kalissaac/prisma-typegen
+// DO NOT EDIT
+
 export enum USER_ROLE {
   USER = "USER",
   ADMIN = "ADMIN"
@@ -12,6 +15,12 @@ export enum USER_PROVIDER {
 export enum VERIFICATION_CODE {
   VERIFY_EMAIL = "VERIFY_EMAIL",
   PASSWORD_RESET = "PASSWORD_RESET"
+}
+
+export enum GLOBAL_SNAPSHOT_TYPE {
+  WINDOWS = "WINDOWS",
+  LINUX = "LINUX",
+  OTHER = "OTHER"
 }
 
 export enum RESOURCE_TYPE {
@@ -43,6 +52,8 @@ export enum ACTIVITY_ACTION {
   CHANGE_PASSWORD = "CHANGE_PASSWORD",
   UPDATE_PROFILE = "UPDATE_PROFILE",
   LOGOUT = "LOGOUT",
+  IMPERSONATE = "IMPERSONATE",
+  STOP_IMPERSONATE = "STOP_IMPERSONATE",
   CREATE_INSTANCE = "CREATE_INSTANCE",
   UPDATE_INSTANCE = "UPDATE_INSTANCE",
   DELETE_INSTANCE = "DELETE_INSTANCE",
@@ -84,6 +95,9 @@ export interface User {
   updatedAt: Date
   provider: USER_PROVIDER
   isSubscribed?: Date
+  twoFactorSecret?: string
+  twoFactorEnabled?: Date
+  recoveryCodes: RecoveryCode[]
   tickets: Ticket[]
   refreshTokens: RefreshToken[]
   resources: Resource[]
@@ -92,6 +106,15 @@ export interface User {
   notifications: NotificationRecipient[]
   messagesSent: TicketMessage[]
   messagesReceived: TicketMessage[]
+}
+
+export interface RecoveryCode {
+  id: string
+  code: string
+  used?: Date
+  createdAt: Date
+  userId: string
+  user: User
 }
 
 export interface Verification {
@@ -119,18 +142,23 @@ export interface Plan {
   hourlyCost: number
   monthlyCost: number
   backupCost: number
-  promotionalPrice: number | null
+  promotionalPrice?: number
   createdAt: Date
+}
+
+export interface GlobalSnapshot {
+  id: string
+  type: GLOBAL_SNAPSHOT_TYPE
 }
 
 export interface Resource {
   id: string
   startTime: Date
   creditsConsumed: number
+  password?: string
   type: RESOURCE_TYPE
   userId: string
   user: User
-  password?: string
   activities: Activity[]
 }
 
@@ -203,9 +231,19 @@ export interface NotificationRecipient {
   notification: Notification
 }
 
-export interface ApiKey {
+export interface ApiKeys {
   id: string
   key: string
   name: string
   active: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface PaymentKey {
+  id: string
+  clientId: string
+  clientSecret: string
+  webhookId: string
+  type: PAYMENT_METHOD
 }

@@ -1,24 +1,17 @@
+import { useEffect } from "react"
 import { toast } from "sonner"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { api } from "@/lib/api"
-import { handleError } from "@/lib/error"
-import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
-import { Button } from "@/components/ui/button"
+import { handleError } from "@/lib/error"
 import { apiKeySchema } from "@/lib/validations/api-key"
-import { useCreateAPIKeyModal } from "@/hooks/use-create-api-key-modal"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useActiveAPIKey } from "@/hooks/use-active-api-key"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog"
-
+import { PasswordInput } from "@/components/ui/password-input"
 import {
   Form,
   FormControl,
@@ -29,57 +22,79 @@ import {
   FormMessage
 } from "@/components/ui/form"
 
-import type { ApiKeySchema } from "@/lib/validations/api-key"
-import type { ApiKey } from "@/types/db"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog"
 
-export default function CreateAPIKeyDialog() {
+import type { ApiKeys } from "@/types/db"
+import type { ApiKeySchema } from "@/lib/validations/api-key"
+
+type UpdateAPIKeyDialogProps = {
+  open: boolean
+  onOpenChange: () => void
+  apiKey: ApiKeys
+}
+
+export default function UpdateAPIKeyDialog({
+  open,
+  onOpenChange,
+  apiKey
+}: UpdateAPIKeyDialogProps) {
   const queryClient = useQueryClient()
-  const { open, onOpenChange } = useCreateAPIKeyModal()
   const { setActiveKey } = useActiveAPIKey()
+
+  const defaultValues = apiKey
+    ? {
+        name: apiKey.name,
+        key: apiKey.key,
+        active: apiKey.active
+      }
+    : {}
 
   const form = useForm<ApiKeySchema>({
     resolver: zodResolver(apiKeySchema),
-    defaultValues: {
-      name: "",
-      key: "",
-      active: false
-    }
+    defaultValues
   })
 
-  const { isPending, mutate: create } = useMutation({
+  const { isPending, mutate: updateAPIKey } = useMutation({
     mutationFn: async (values: ApiKeySchema) => {
-      const { data } = await api.post<ApiKey>("/admin/api-keys", values)
-      return data
+      await api.patch(`/admin/api-keys/${apiKey.id}`, values)
     },
-    onSuccess: (data, { active }) => {
-      handleOpenChange(false)
-      toast.success("API Key created")
+    onSuccess: (_, { active }) => {
+      onOpenChange()
+      toast.success("API Key updated successfully!")
       queryClient.invalidateQueries({ queryKey: ["api-keys"] })
-      if (active) setActiveKey(data.id)
+      if (active) setActiveKey(apiKey.id)
     },
     onError: handleError
   })
 
-  const onSubmit = form.handleSubmit((values) => create(values))
+  const onSubmit = form.handleSubmit((values) => updateAPIKey(values))
 
-  const handleOpenChange = (open: boolean) => {
-    onOpenChange(open)
-    if (!open) setTimeout(() => form.reset(), 300)
-  }
+  useEffect(() => {
+    if (apiKey) {
+      form.reset(defaultValues)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiKey, form])
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create API Key</DialogTitle>
+          <DialogTitle>Update API Key</DialogTitle>
           <DialogDescription>
-            This can be used as primary api key or fallback if anything went
-            wrong
+            Update api key <span className="font-medium">{apiKey?.name}</span>!
+            This will take effect on your whole platform!
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={onSubmit} className="space-y-4">
+          <form onSubmit={onSubmit} className="space-y-3.5">
             <FormField
               control={form.control}
               name="name"
@@ -88,7 +103,7 @@ export default function CreateAPIKeyDialog() {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input autoFocus placeholder="Bravt 1" {...field} />
+                    <Input autoFocus placeholder="API Key" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -103,7 +118,7 @@ export default function CreateAPIKeyDialog() {
                 <FormItem>
                   <FormLabel>API Key</FormLabel>
                   <FormControl>
-                    <Input placeholder="9a8s98a98s9s89e2892k23j2" {...field} />
+                    <PasswordInput {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -134,8 +149,13 @@ export default function CreateAPIKeyDialog() {
               )}
             />
 
-            <Button className="w-full" type="submit" loading={isPending}>
-              Create
+            <Button
+              type="submit"
+              className="w-full"
+              size="lg"
+              loading={isPending}
+            >
+              Save
             </Button>
           </form>
         </Form>

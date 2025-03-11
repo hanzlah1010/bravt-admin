@@ -15,7 +15,7 @@ import {
   TableRow
 } from "@/components/ui/table"
 
-import type { ApiKey } from "@/types/db"
+import type { ApiKeys } from "@/types/db"
 
 const DeleteAPIKeyDialog = lazy(() => import("./delete-api-key-dialog"))
 const UpdateAPIKeyDialog = lazy(() => import("./update-api-key-dialog"))
@@ -24,7 +24,7 @@ export function APIKeysTable() {
   const { data, error, isPending } = useApiKeysQuery(false)
   const [rowAction, setRowAction] = useState<{
     type: "delete" | "update"
-    key: ApiKey
+    key: ApiKeys
   } | null>(null)
 
   const hasActiveKeys = useMemo(() => data?.some((key) => key.active), [data])

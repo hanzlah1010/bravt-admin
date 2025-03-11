@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/sidebar"
 
 const CreateAPIKeyDialog = lazy(
-  () => import("@/routes/api-keys/_components/create-api-key-dialog")
+  () => import("@/routes/api-keys/_components/vultr/create-api-key-dialog")
 )
 
 export function APIKeySwitcher() {
@@ -38,9 +38,6 @@ export function APIKeySwitcher() {
 
   return (
     <>
-      <Suspense>
-        <CreateAPIKeyDialog />
-      </Suspense>
       <SidebarMenu>
         <SidebarMenuItem>
           <DropdownMenu>
@@ -94,7 +91,10 @@ export function APIKeySwitcher() {
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem className="gap-2 p-2" onClick={onCreate}>
+              <DropdownMenuItem
+                className="gap-2 p-2"
+                onClick={() => onCreate("VULTR")}
+              >
                 <div className="flex size-6 items-center justify-center rounded-md border bg-popover">
                   <Plus className="size-4" />
                 </div>
@@ -106,6 +106,9 @@ export function APIKeySwitcher() {
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
+      <Suspense>
+        <CreateAPIKeyDialog />
+      </Suspense>
     </>
   )
 }

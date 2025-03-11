@@ -2,6 +2,7 @@ import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { api } from "@/lib/api"
+import { toSentenceCase } from "@/lib/utils"
 import { handleError } from "@/lib/error"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,39 +16,33 @@ import {
   AlertDialogAction
 } from "@/components/ui/alert-dialog"
 
-import type { ApiKey } from "@/types/db"
-import { useActiveAPIKey } from "@/hooks/use-active-api-key"
+import type { PaymentKey } from "@/types/db"
 
-type DeleteAPIKeyDialogProps = {
+type DeletePaymentKeyDialogProps = {
   open: boolean
   onOpenChange: () => void
-  apiKey: ApiKey
+  paymentKey: PaymentKey
 }
 
-export default function DeleteAPIKeyDialog({
-  apiKey,
+export default function DeletePaymentKeyDialog({
+  paymentKey,
   open,
   onOpenChange
-}: DeleteAPIKeyDialogProps) {
+}: DeletePaymentKeyDialogProps) {
   const queryClient = useQueryClient()
-  const { activeKey, removeKeyId } = useActiveAPIKey()
 
-  const { isPending, mutate: deleteAPIKey } = useMutation({
+  const { isPending, mutate: deletePaymentKey } = useMutation({
     mutationFn: async () => {
-      if (!apiKey) throw "No api key to delete"
-      await api.delete(`/admin/api-keys/${apiKey?.id}`)
+      if (!paymentKey) throw "No key to delete"
+      await api.delete(`/admin/api-keys/payment/${paymentKey?.id}`)
     },
     onSuccess: () => {
-      queryClient.setQueryData<ApiKey[]>(["api-keys"], (prev) => {
+      queryClient.setQueryData<PaymentKey[]>(["payment-keys"], (prev) => {
         if (!prev) return prev
-        return prev.filter((key) => key.id !== apiKey?.id)
+        return prev.filter((key) => key.id !== paymentKey?.id)
       })
 
-      if (apiKey.id === activeKey?.id) {
-        removeKeyId()
-      }
-
-      toast.success("API Key Deleted!")
+      toast.success("Payment Key Deleted!")
     },
     onError: handleError,
     onSettled: onOpenChange
@@ -59,8 +54,10 @@ export default function DeleteAPIKeyDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            API Key{" "}
-            <span className="font-medium text-foreground">{apiKey?.name}</span>{" "}
+            Payment keys for{" "}
+            <span className="font-medium text-foreground">
+              {toSentenceCase(paymentKey?.type.toLowerCase())}
+            </span>{" "}
             will be permanently deleted! This action can&apos;t be undone!
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -76,7 +73,7 @@ export default function DeleteAPIKeyDialog({
             <Button
               variant="destructive"
               loading={isPending}
-              onClick={() => deleteAPIKey()}
+              onClick={() => deletePaymentKey()}
             >
               Delete
             </Button>

@@ -1,13 +1,17 @@
 import { create } from "zustand"
 
+type ModalType = "VULTR" | "PAYMENT"
+
 type CreateAPIKeyModalStore = {
   open: boolean
-  onOpen: () => void
+  modalType: ModalType
+  onOpen: (type: ModalType) => void
   onOpenChange: (open: boolean) => void
 }
 
 export const useCreateAPIKeyModal = create<CreateAPIKeyModalStore>((set) => ({
   open: false,
-  onOpen: () => set({ open: true }),
+  modalType: "VULTR",
+  onOpen: (modalType) => set({ open: true, modalType }),
   onOpenChange: (open) => set({ open })
 }))

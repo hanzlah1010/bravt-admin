@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { api } from "@/lib/api"
+import { GLOBAL_SNAPSHOT_TYPE } from "@/types/db"
+import { toSentenceCase } from "@/lib/utils"
 import { handleError } from "@/lib/error"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -25,6 +27,14 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form"
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
 
 import type { CreateGlobalSnapshotDialog } from "@/lib/validations/snapshot"
 
@@ -95,6 +105,34 @@ export default function CreateGlobalSnapshotDialog() {
                   <FormControl>
                     <Input placeholder="Description" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="type"
+              disabled={isPending}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Please select snapshot type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.values(GLOBAL_SNAPSHOT_TYPE).map((item) => (
+                        <SelectItem key={item} value={item}>
+                          {toSentenceCase(item.toLowerCase())}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
                   <FormMessage />
                 </FormItem>
               )}
