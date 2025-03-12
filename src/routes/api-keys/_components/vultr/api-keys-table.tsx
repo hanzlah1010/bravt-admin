@@ -44,15 +44,9 @@ export function APIKeysTable() {
   return (
     <>
       {!hasActiveKeys && (
-        <div className="rounded-md border border-amber-500/50 bg-amber-500/10 px-4 py-3 text-amber-600">
-          <p className="text-sm">
-            <TriangleAlert
-              className="-mt-0.5 me-3 inline-flex opacity-60"
-              size={16}
-              aria-hidden="true"
-            />
-            No active api key found!
-          </p>
+        <div className="flex items-center gap-2 rounded-md bg-warning px-4 py-3 text-sm text-warning-foreground">
+          <TriangleAlert size={16} aria-hidden="true" />
+          No active api key found!
         </div>
       )}
       <Table>

@@ -89,7 +89,6 @@ export function isInstanceInstalling(instance: VultrInstance) {
     !["running", "stopped"].includes(instance?.power_status)
   ) {
     return true
-  } else {
-    return false
   }
+  return false
 }

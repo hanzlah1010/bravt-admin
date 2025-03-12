@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
-import { useUserStatsQuery } from "@/queries/use-users-stats-query"
+import { useTransactionsStatsQuery } from "@/queries/use-transactions-stats-query"
 import {
   ChartContainer,
   ChartTooltip,
@@ -27,24 +27,24 @@ import {
 import type { ChartConfig } from "@/components/ui/chart"
 
 const chartConfig = {
-  count: {
-    label: "Users",
+  totalAmount: {
+    label: "Total",
     color: "hsl(var(--primary))"
   }
 } satisfies ChartConfig
 
-export function UsersChart() {
+export function TransactionsChart() {
   const [year, setYear] = useState(new Date().getFullYear())
 
-  const { data } = useUserStatsQuery(year)
+  const { data } = useTransactionsStatsQuery(year)
 
   return (
     <Card className="h-fit">
       <CardHeader className="flex-row items-start justify-between gap-3 space-y-0">
         <div className="space-y-1.5">
-          <CardTitle>User joined during year {year}</CardTitle>
+          <CardTitle>Successful transactions during year {year}</CardTitle>
           <CardDescription>
-            Showing the users joined for each month of the year
+            Showing the payments received for each month of the year
           </CardDescription>
         </div>
         <Select
@@ -66,7 +66,7 @@ export function UsersChart() {
 
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={data.usersData}>
+          <AreaChart accessibilityLayer data={data.transactionsData}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="monthName"
@@ -74,12 +74,31 @@ export function UsersChart() {
               tickMargin={4}
               axisLine={false}
             />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="line" />}
+
+            <defs>
+              <linearGradient id="fillAmt" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-totalAmount)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-totalAmount)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+            </defs>
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+            <Area
+              dataKey="totalAmount"
+              type="natural"
+              fill="url(#fillAmt)"
+              fillOpacity={0.4}
+              stroke="var(--color-totalAmount)"
+              stackId="a"
             />
-            <Bar dataKey="count" fill="var(--color-count)" radius={4} />
-          </BarChart>
+          </AreaChart>
         </ChartContainer>
       </CardContent>
     </Card>

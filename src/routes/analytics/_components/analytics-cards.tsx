@@ -54,23 +54,11 @@ export function AnalyticsCards() {
     }
   }, [instances])
 
-  if (isAnalyticsPending || isInstancesPending) {
+  if (isAnalyticsPending) {
     return (
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="relative overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <Skeleton className="h-4 w-[100px]" />
-              <Skeleton className="size-4 shrink-0" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="mb-4 h-8 w-[150px]" />
-              <div className="mt-4 flex items-center justify-between">
-                <Skeleton className="h-4 w-[100px]" />
-                <Skeleton className="h-4 w-[60px]" />
-              </div>
-            </CardContent>
-          </Card>
+          <StatCard.Skeleton key={i} />
         ))}
       </div>
     )
@@ -107,13 +95,17 @@ export function AnalyticsCards() {
         icon={Crown}
       />
 
-      <StatCard
-        title="Instances"
-        total={instanceStats.total}
-        current={instanceStats.newThisMonth}
-        growth={instanceStats.growthPercentage}
-        icon={Server}
-      />
+      {isInstancesPending ? (
+        <StatCard.Skeleton />
+      ) : (
+        <StatCard
+          title="Instances"
+          total={instanceStats.total}
+          current={instanceStats.newThisMonth}
+          growth={instanceStats.growthPercentage}
+          icon={Server}
+        />
+      )}
     </div>
   )
 }
@@ -168,6 +160,24 @@ function StatCard({
             )}
             {formatPrice(growth / 100, 2, "percent")}
           </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+StatCard.Skeleton = () => {
+  return (
+    <Card className="relative overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <Skeleton className="h-4 w-[100px]" />
+        <Skeleton className="size-4 shrink-0" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="mb-4 h-8 w-[150px]" />
+        <div className="mt-4 flex items-center justify-between">
+          <Skeleton className="h-4 w-[100px]" />
+          <Skeleton className="h-4 w-[60px]" />
         </div>
       </CardContent>
     </Card>

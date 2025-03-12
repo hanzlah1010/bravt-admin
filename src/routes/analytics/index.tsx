@@ -2,6 +2,8 @@ import { AppHeader } from "@/components/app-header"
 import { AnalyticsCards } from "./_components/analytics-cards"
 import { UsersChart } from "./_components/users-chart"
 import { RecentTransactions } from "./_components/recent-transactions"
+import { TransactionsChart } from "./_components/transactions-chart"
+import { InstancesChart } from "./_components/instances-chart"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -26,6 +28,11 @@ export default function Analytics() {
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-[0.6fr_0.4fr]">
         <UsersChart />
         <RecentTransactions />
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-[0.6fr_0.4fr]">
+        <TransactionsChart />
+        <InstancesChart />
       </div>
     </div>
   )

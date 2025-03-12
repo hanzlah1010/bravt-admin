@@ -8,7 +8,7 @@ export function useRecentTransactionsQuery() {
     queryKey: ["recent-transactions"],
     placeholderData: keepPreviousData,
     queryFn: async () => {
-      const { data } = await api.get("/admin/stats/transactions")
+      const { data } = await api.get("/admin/stats/transactions/recent")
       return data
     }
   })

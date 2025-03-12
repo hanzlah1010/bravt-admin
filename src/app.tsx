@@ -29,7 +29,7 @@ const Impersonation = lazy(() => import("@/routes/impersonation"))
 const GlobalSnapshots = lazy(() => import("@/routes/global-snapshots"))
 
 export function App() {
-  const { user, isPending } = useSessionQuery()
+  const { user, isPending } = useSessionQuery(true)
 
   if (isPending) {
     return (

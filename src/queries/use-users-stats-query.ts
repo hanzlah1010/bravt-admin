@@ -1,7 +1,7 @@
 import { api } from "@/lib/api"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 
-export function useUserStatsQuery(year: string) {
+export function useUserStatsQuery(year: number) {
   const { data = { usersData: [], availableYears: [] }, ...query } = useQuery<{
     usersData: {
       month: number
