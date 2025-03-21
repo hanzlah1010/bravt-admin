@@ -75,12 +75,8 @@ export function useInstancesQuery() {
           instance.user.email.toLowerCase().includes(query)
 
         const isInstalling = isInstanceInstalling(instance)
-        const matchesStatus =
-          !status.length ||
-          (status.includes("installing") && isInstalling) ||
-          (!status.includes("installing") &&
-            !isInstalling &&
-            status.includes(instance.power_status))
+        const powerStatus = isInstalling ? "installing" : instance.power_status
+        const matchesStatus = !status.length || status.includes(powerStatus)
 
         const instanceDate = parseISO(instance.date_created)
 

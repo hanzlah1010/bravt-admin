@@ -15,7 +15,6 @@ const NumberInput = React.forwardRef<
       valueIsNumericString = true,
       allowNegative = false,
       min = 0,
-      decimalScale = 3,
       nullable = false,
       ...props
     },
@@ -27,7 +26,6 @@ const NumberInput = React.forwardRef<
         customInput={Input}
         allowNegative={allowNegative}
         min={min}
-        decimalScale={decimalScale}
         valueIsNumericString={valueIsNumericString}
         autoComplete="off"
         onValueChange={({ floatValue }) => {

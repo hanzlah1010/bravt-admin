@@ -54,6 +54,8 @@ export function APIKeysTable() {
           <TableRow>
             <TableHead className="pl-6">Name</TableHead>
             <TableHead>Key</TableHead>
+            <TableHead>Instances Limit</TableHead>
+            <TableHead>Instances Created</TableHead>
             <TableHead className="pr-6 text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -65,6 +67,8 @@ export function APIKeysTable() {
                 <TableCell className="max-w-[10rem] truncate">
                   {key.key}
                 </TableCell>
+                <TableCell>{key.instancesLimit}</TableCell>
+                <TableCell>{key.instancesCreated}</TableCell>
                 <TableCell className="flex items-center justify-end gap-2 pr-6">
                   <Button
                     size="icon"

@@ -9,7 +9,7 @@ import { toSentenceCase } from "@/lib/utils"
 import { handleError } from "@/lib/error"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { createGlobalSnapshotDialog } from "@/lib/validations/snapshot"
+import { createGlobalSnapshotSchema } from "@/lib/validations/snapshot"
 import { useCreateGlobalSnapshotModal } from "@/hooks/use-create-global-snapshot-modal"
 import {
   Dialog,
@@ -36,14 +36,14 @@ import {
   SelectValue
 } from "@/components/ui/select"
 
-import type { CreateGlobalSnapshotDialog } from "@/lib/validations/snapshot"
+import type { CreateGlobalSnapshotSchema } from "@/lib/validations/snapshot"
 
 export default function CreateGlobalSnapshotDialog() {
   const queryClient = useQueryClient()
   const { open, onOpenChange } = useCreateGlobalSnapshotModal()
 
-  const form = useForm<CreateGlobalSnapshotDialog>({
-    resolver: zodResolver(createGlobalSnapshotDialog),
+  const form = useForm<CreateGlobalSnapshotSchema>({
+    resolver: zodResolver(createGlobalSnapshotSchema),
     defaultValues: {
       url: "",
       description: ""
@@ -51,7 +51,7 @@ export default function CreateGlobalSnapshotDialog() {
   })
 
   const { mutate: create, isPending } = useMutation({
-    mutationFn: async (values: CreateGlobalSnapshotDialog) => {
+    mutationFn: async (values: CreateGlobalSnapshotSchema) => {
       await api.post("/admin/global-snapshot", values)
     },
     onSuccess: () => {

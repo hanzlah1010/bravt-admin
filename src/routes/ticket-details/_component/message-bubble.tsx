@@ -37,12 +37,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
   return (
     <>
-      <li
-        className={cn(
-          "group/message flex w-full items-center gap-3",
-          isAdminMessage ? "ml-auto flex-row-reverse" : "mr-auto flex-row"
-        )}
-      >
+      <li className="group/message ml-auto flex w-full flex-row-reverse items-center gap-3">
         <div className="w-fit max-w-full md:max-w-lg">
           <p
             className={cn(

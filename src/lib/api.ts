@@ -15,7 +15,7 @@ api.interceptors.request.use((request) => {
     request.headers.Authorization = `Bearer ${accessToken}`
   }
 
-  const activeApiKey = localStorage.getItem("active_key")?.replace(/"/g, "")
+  const activeApiKey = sessionStorage.getItem("active_key")?.replace(/"/g, "")
 
   if (activeApiKey) {
     request.headers["x-api-key-id"] = activeApiKey

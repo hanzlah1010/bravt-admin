@@ -5,6 +5,10 @@ import { PAYMENT_METHOD } from "@/types/db"
 export const apiKeySchema = z.object({
   name: z.string().min(1, "Please enter a unique name for your api key"),
   key: z.string().min(1, "Please enter you api key"),
+  instancesLimit: z
+    .number({ required_error: "Instances limit is required" })
+    .int("Invalid limit")
+    .min(0, "Must be positive"),
   active: z.boolean()
 })
 

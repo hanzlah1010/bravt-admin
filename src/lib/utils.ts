@@ -19,7 +19,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatPrice(
   amount: string | number,
-  maxDecimals = 3,
+  maxDecimals = 7,
   style: keyof Intl.NumberFormatOptionsStyleRegistry = "currency"
 ) {
   const amtNumber = Number(amount)

@@ -33,17 +33,10 @@ import {
 
 const items = [
   {
-    label: "Dashboard",
-    icon: LayoutDashboardIcon,
-    subItems: [
-      { label: "Analytics", url: "/" },
-      { label: "Plans", url: "/plans" }
-    ]
-  },
-  {
     label: "VPS Management",
     icon: ServerIcon,
     subItems: [
+      { label: "Plans", url: "/plans" },
       { label: "Instances", url: "/instances" },
       { label: "Snapshots", url: "/snapshots" },
       { label: "Firewalls", url: "/firewall-groups" },
@@ -100,6 +93,15 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === "/"}>
+                <Link to="/">
+                  <LayoutDashboardIcon />
+                  Dashboard
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
             {items.map((item, index) => (
               <Collapsible
                 key={item.label}

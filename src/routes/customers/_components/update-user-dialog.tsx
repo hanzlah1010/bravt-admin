@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { api } from "@/lib/api"
 import { handleError } from "@/lib/error"
-import { updatePlanSchema } from "@/lib/validations/plan"
+import { updateUserSchema } from "@/lib/validations/user"
 import { Button } from "@/components/ui/button"
 import { NumberInput } from "@/components/ui/number-input"
 import {
@@ -26,67 +26,66 @@ import {
   DialogTitle
 } from "@/components/ui/dialog"
 
-import type { TablePlan } from "@/queries/use-plans-query"
-import type { UpdatePlanSchema } from "@/lib/validations/plan"
+import type { User } from "@/types/db"
+import type { UpdateUserSchema } from "@/lib/validations/user"
 
-type UpdatePlanDialogProps = {
+type UpdateUserDialogProps = {
   open: boolean
   onOpenChange: () => void
-  plan?: TablePlan
+  user?: User
 }
 
-export default function UpdatePlanDialog({
+export default function UpdateUserDialog({
   open,
   onOpenChange,
-  plan
-}: UpdatePlanDialogProps) {
+  user
+}: UpdateUserDialogProps) {
   const queryClient = useQueryClient()
 
-  const defaultValues = plan
+  const defaultValues = user
     ? {
-        hourlyCost: Number(plan?.instanceCost),
-        backupCost: Number(plan?.backupCost),
-        promotionalPrice: plan?.promotionalPrice
-          ? Number(plan?.promotionalPrice)
-          : null
+        credits: user?.credits,
+        instanceCreateLimit: user?.instanceCreateLimit,
+        dailyInstanceLimit: user?.dailyInstanceLimit,
+        dailyDeleteLimit: user?.dailyDeleteLimit
       }
     : {}
 
-  const form = useForm<UpdatePlanSchema>({
-    resolver: zodResolver(updatePlanSchema),
+  const form = useForm<UpdateUserSchema>({
+    resolver: zodResolver(updateUserSchema),
     defaultValues
   })
 
-  const { isPending, mutate: updatePlan } = useMutation({
-    mutationFn: async (values: UpdatePlanSchema) => {
-      if (!plan) throw "No plan"
-      await api.patch(`/admin/plan/${plan.id}`, values)
+  const { isPending, mutate: updateUser } = useMutation({
+    mutationFn: async (values: UpdateUserSchema) => {
+      if (!user) throw "No user"
+      await api.patch(`/admin/user/${user.id}`, values)
     },
     onSuccess: () => {
       onOpenChange()
-      toast.success("Plan updated successfully!")
-      queryClient.invalidateQueries({ queryKey: ["plans"] })
+      toast.success("User updated successfully!")
+      queryClient.invalidateQueries({ queryKey: ["users"] })
     },
     onError: handleError
   })
 
-  const onSubmit = form.handleSubmit((values) => updatePlan(values))
+  const onSubmit = form.handleSubmit((values) => updateUser(values))
 
   useEffect(() => {
-    if (plan) {
+    if (user) {
       form.reset(defaultValues)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plan, form])
+  }, [user, form])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Update Plan</DialogTitle>
+          <DialogTitle>Update User</DialogTitle>
           <DialogDescription>
-            Update plan <span className="font-medium">{plan?.plan}</span> &
-            customize pricing
+            Update user <span className="font-medium">{user?.email}</span> &
+            customize limits
           </DialogDescription>
         </DialogHeader>
 
@@ -94,15 +93,12 @@ export default function UpdatePlanDialog({
           <form onSubmit={onSubmit} className="space-y-3.5">
             <FormField
               control={form.control}
-              name="hourlyCost"
+              name="credits"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Instance Cost{" "}
-                    <sub className="text-muted-foreground">(Per Hour)</sub>
-                  </FormLabel>
+                  <FormLabel>Credits</FormLabel>
                   <FormControl>
-                    <NumberInput placeholder="0.014" prefix="$ " {...field} />
+                    <NumberInput placeholder="10" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -111,15 +107,12 @@ export default function UpdatePlanDialog({
 
             <FormField
               control={form.control}
-              name="backupCost"
+              name="instanceCreateLimit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Backup Cost{" "}
-                    <sub className="text-muted-foreground">(Per Hour)</sub>
-                  </FormLabel>
+                  <FormLabel>Instance Limit</FormLabel>
                   <FormControl>
-                    <NumberInput placeholder="0.01" prefix="$ " {...field} />
+                    <NumberInput placeholder="5" decimalScale={0} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -128,20 +121,26 @@ export default function UpdatePlanDialog({
 
             <FormField
               control={form.control}
-              name="promotionalPrice"
+              name="dailyInstanceLimit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Promotional Price{" "}
-                    <sub className="text-muted-foreground">(Per Hour)</sub>
-                  </FormLabel>
+                  <FormLabel>Daily Create Instance Limit</FormLabel>
                   <FormControl>
-                    <NumberInput
-                      placeholder="0.028"
-                      prefix="$ "
-                      nullable
-                      {...field}
-                    />
+                    <NumberInput placeholder="5" decimalScale={0} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="dailyDeleteLimit"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Daily Delete Instance Limit</FormLabel>
+                  <FormControl>
+                    <NumberInput placeholder="5" decimalScale={0} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

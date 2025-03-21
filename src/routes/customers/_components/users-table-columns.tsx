@@ -175,7 +175,20 @@ export function getColumns({
             <DropdownMenuItem
               onSelect={() => setRowAction({ row, type: "update" })}
             >
-              Impersonate User
+              Update
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onSelect={() => setRowAction({ row, type: "impersonate" })}
+            >
+              Impersonate
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onSelect={() => setRowAction({ row, type: "terminate" })}
+              className="text-destructive focus:bg-destructive focus:text-destructive-foreground"
+            >
+              Terminate
             </DropdownMenuItem>
 
             <DropdownMenuItem

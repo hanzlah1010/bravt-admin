@@ -32,5 +32,5 @@ export interface DataTableFilterField<TData> {
 
 export interface DataTableRowAction<TData> {
   row: Row<TData>
-  type: "update" | "delete"
+  type: "update" | "delete" | string
 }

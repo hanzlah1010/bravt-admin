@@ -12,6 +12,7 @@ import { apiKeySchema } from "@/lib/validations/api-key"
 import { useCreateAPIKeyModal } from "@/hooks/use-create-api-key-modal"
 import { useActiveAPIKey } from "@/hooks/use-active-api-key"
 import { PasswordInput } from "@/components/ui/password-input"
+import { NumberInput } from "@/components/ui/number-input"
 import {
   Dialog,
   DialogContent,
@@ -108,6 +109,25 @@ export default function CreateAPIKeyDialog() {
                   <FormLabel>API Key</FormLabel>
                   <FormControl>
                     <PasswordInput {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="instancesLimit"
+              disabled={isPending}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Instances Limit</FormLabel>
+                  <FormControl>
+                    <NumberInput
+                      placeholder="300"
+                      decimalScale={0}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

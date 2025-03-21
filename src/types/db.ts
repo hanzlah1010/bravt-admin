@@ -14,7 +14,8 @@ export enum USER_PROVIDER {
 
 export enum VERIFICATION_CODE {
   VERIFY_EMAIL = "VERIFY_EMAIL",
-  PASSWORD_RESET = "PASSWORD_RESET"
+  PASSWORD_RESET = "PASSWORD_RESET",
+  CHANGE_EMAIL = "CHANGE_EMAIL"
 }
 
 export enum GLOBAL_SNAPSHOT_TYPE {
@@ -54,6 +55,7 @@ export enum ACTIVITY_ACTION {
   LOGOUT = "LOGOUT",
   IMPERSONATE = "IMPERSONATE",
   STOP_IMPERSONATE = "STOP_IMPERSONATE",
+  CHANGE_EMAIL = "CHANGE_EMAIL",
   CREATE_INSTANCE = "CREATE_INSTANCE",
   UPDATE_INSTANCE = "UPDATE_INSTANCE",
   DELETE_INSTANCE = "DELETE_INSTANCE",
@@ -95,8 +97,13 @@ export interface User {
   updatedAt: Date
   provider: USER_PROVIDER
   isSubscribed?: Date
+  alertSent?: Date
+  secondAlertSent?: Date
   twoFactorSecret?: string
   twoFactorEnabled?: Date
+  instanceCreateLimit: number
+  dailyInstanceLimit: number
+  dailyDeleteLimit: number
   recoveryCodes: RecoveryCode[]
   tickets: Ticket[]
   refreshTokens: RefreshToken[]
@@ -106,6 +113,7 @@ export interface User {
   notifications: NotificationRecipient[]
   messagesSent: TicketMessage[]
   messagesReceived: TicketMessage[]
+  verificationTokens: Verification[]
 }
 
 export interface RecoveryCode {
@@ -124,6 +132,8 @@ export interface Verification {
   expiresAt: Date
   type: VERIFICATION_CODE
   createdAt: Date
+  userId?: string
+  user?: User
 }
 
 export interface RefreshToken {
@@ -156,6 +166,8 @@ export interface Resource {
   startTime: Date
   creditsConsumed: number
   password?: string
+  createdAt: Date
+  deletedAt?: Date
   type: RESOURCE_TYPE
   userId: string
   user: User
@@ -238,6 +250,8 @@ export interface ApiKeys {
   active: boolean
   createdAt: Date
   updatedAt: Date
+  instancesLimit: number
+  instancesCreated: number
 }
 
 export interface PaymentKey {
@@ -246,4 +260,9 @@ export interface PaymentKey {
   clientSecret: string
   webhookId: string
   type: PAYMENT_METHOD
+}
+
+export interface SnapshotCost {
+  id: string
+  cost: number
 }

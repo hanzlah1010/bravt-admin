@@ -1,10 +1,9 @@
 import { lazy, Suspense } from "react"
-import { Route, Routes } from "react-router"
+import { Route, Routes, useLocation } from "react-router"
 
 import { USER_ROLE } from "@/types/db"
 import { TicketsLayout } from "@/routes/tickets/layout"
 import { MainLayout } from "@/components/main-layout"
-import { Spinner } from "@/components/ui/spinner"
 import { SocketProvider, Sockets } from "@/providers/socket-provider"
 import { NotFound } from "@/routes/not-found"
 import { useSessionQuery } from "@/queries/use-session-query"
@@ -27,16 +26,16 @@ const CreateNotification = lazy(() => import("@/routes/create-notification"))
 const ApiKeys = lazy(() => import("@/routes/api-keys"))
 const Impersonation = lazy(() => import("@/routes/impersonation"))
 const GlobalSnapshots = lazy(() => import("@/routes/global-snapshots"))
+const Login = lazy(() => import("@/routes/login"))
+
+const LOGIN_ROUTE = "/admin-Nm5K3V2pF1L7XjQ8Y@R9Tb4Z"
 
 export function App() {
+  const { pathname } = useLocation()
   const { user, isPending } = useSessionQuery(true)
 
   if (isPending) {
-    return (
-      <div className="flex h-svh w-full items-center justify-center">
-        <Spinner />
-      </div>
-    )
+    return <PageSpinner />
   }
 
   if (!user || user.role !== USER_ROLE.ADMIN) {
@@ -48,14 +47,17 @@ export function App() {
       )
     }
 
-    window.location.replace(import.meta.env.VITE_CONSOLE_URL)
-    return null
+    if (pathname !== LOGIN_ROUTE) {
+      window.location.replace(import.meta.env.VITE_CONSOLE_URL)
+      return <PageSpinner />
+    }
   }
 
   return (
     <SocketProvider>
       <Sockets />
       <Routes>
+        <Route path={LOGIN_ROUTE} element={<Login />} />
         <Route element={<MainLayout />}>
           <Route index element={<Analytics />} />
           <Route path="/plans" element={<Plans />} />

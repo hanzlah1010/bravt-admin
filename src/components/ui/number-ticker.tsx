@@ -1,62 +1,37 @@
-import { useInView, useMotionValue, useSpring } from "motion/react"
-import { useEffect, useRef } from "react"
+import { useEffect, useState } from "react"
+import { motion, useSpring, useTransform } from "motion/react"
 
 import { cn, formatPrice } from "@/lib/utils"
 
-import type { ComponentPropsWithoutRef } from "react"
-
-interface NumberTickerProps extends ComponentPropsWithoutRef<"span"> {
+interface NumberTickerProps {
   value: number
-  direction?: "up" | "down"
-  delay?: number // delay in s
   formatStyle?: keyof Intl.NumberFormatOptionsStyleRegistry
+  className?: string
 }
 
 export function NumberTicker({
-  value,
-  direction = "up",
-  delay = 0,
+  value: _value,
   className,
-  formatStyle = "currency",
-  ...props
+  formatStyle = "currency"
 }: NumberTickerProps) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const motionValue = useMotionValue(direction === "down" ? value : 0)
-  const springValue = useSpring(motionValue, {
-    damping: 60,
-    stiffness: 100
-  })
-  const isInView = useInView(ref, { once: true, margin: "0px" })
+  const [value, setValue] = useState(0)
 
-  useEffect(() => {
-    if (isInView) {
-      setTimeout(() => {
-        motionValue.set(direction === "down" ? 0 : value)
-      }, delay * 1000)
-    }
-  }, [motionValue, isInView, delay, value, direction])
-
-  useEffect(
-    () =>
-      springValue.on("change", (latest) => {
-        if (ref.current) {
-          ref.current.textContent = formatPrice(latest, 0, formatStyle)
-        }
-      }),
-    [springValue, formatStyle]
+  const spring = useSpring(value, { bounce: 0, duration: 1000 })
+  const display = useTransform(spring, (current) =>
+    formatPrice(current, 0, formatStyle)
   )
 
   useEffect(() => {
-    if (ref.current) {
-      ref.current.textContent = formatPrice(0, 0, formatStyle)
-    }
-  }, [value, formatStyle])
+    setValue(_value)
+  }, [_value])
+
+  useEffect(() => {
+    spring.set(value)
+  }, [spring, value])
 
   return (
-    <span
-      ref={ref}
-      className={cn("inline-block tabular-nums tracking-wider", className)}
-      {...props}
-    />
+    <motion.span className={cn("tabular-nums", className)}>
+      {display}
+    </motion.span>
   )
 }

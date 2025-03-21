@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo } from "react"
-import { useLocalStorage } from "usehooks-ts"
+import { useSessionStorage } from "usehooks-ts"
 
 import { useApiKeysQuery } from "@/queries/use-api-keys-query"
 
 export function useActiveAPIKey() {
   const { data } = useApiKeysQuery(false)
-  const [activeKeyId, setActiveKeyId, removeKeyId] = useLocalStorage(
+  const [activeKeyId, setActiveKeyId, removeKeyId] = useSessionStorage(
     "active_key",
     data?.[0]?.id
   )
@@ -29,14 +29,14 @@ export function useActiveAPIKey() {
   )
 
   useEffect(() => {
-    if (activeKey && !localStorage.getItem("active_key")) {
+    if (activeKey && !sessionStorage.getItem("active_key")) {
       setActiveKeyId(activeKey.id)
     }
   }, [activeKey, setActiveKeyId])
 
   useEffect(() => {
     if (activeKeyId && !data?.some((key) => key.id === activeKeyId)) {
-      localStorage.removeItem("active_key")
+      sessionStorage.removeItem("active_key")
       if (data?.[0]) setActiveKeyId(data[0].id)
     }
   }, [activeKeyId, data, setActiveKeyId])

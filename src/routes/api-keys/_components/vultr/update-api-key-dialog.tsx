@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useActiveAPIKey } from "@/hooks/use-active-api-key"
 import { PasswordInput } from "@/components/ui/password-input"
+import { NumberInput } from "@/components/ui/number-input"
 import {
   Form,
   FormControl,
@@ -51,6 +52,7 @@ export default function UpdateAPIKeyDialog({
     ? {
         name: apiKey.name,
         key: apiKey.key,
+        instancesLimit: apiKey.instancesLimit,
         active: apiKey.active
       }
     : {}
@@ -119,6 +121,25 @@ export default function UpdateAPIKeyDialog({
                   <FormLabel>API Key</FormLabel>
                   <FormControl>
                     <PasswordInput {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="instancesLimit"
+              disabled={isPending}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Instances Limit</FormLabel>
+                  <FormControl>
+                    <NumberInput
+                      placeholder="300"
+                      decimalScale={0}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

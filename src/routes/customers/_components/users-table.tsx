@@ -11,7 +11,9 @@ import { useUsersQuery } from "@/queries/use-users-query"
 import type { DataTableFilterField, DataTableRowAction } from "@/types"
 import type { User } from "@/types/db"
 
+const UpdateUserDialog = React.lazy(() => import("./update-user-dialog"))
 const DeleteUsersDialog = React.lazy(() => import("./delete-users-dialog"))
+const TerminateUserDialog = React.lazy(() => import("./terminate-user-dialog"))
 const ImpersonateUserDialog = React.lazy(
   () => import("./impersonate-user-dialog")
 )
@@ -85,7 +87,17 @@ export function UsersTable() {
           users={rowAction?.row.original ? [rowAction.row.original] : undefined}
         />
         <ImpersonateUserDialog
+          open={rowAction?.type === "impersonate"}
+          onOpenChange={() => setRowAction(null)}
+          user={rowAction?.row.original}
+        />
+        <UpdateUserDialog
           open={rowAction?.type === "update"}
+          onOpenChange={() => setRowAction(null)}
+          user={rowAction?.row.original}
+        />
+        <TerminateUserDialog
+          open={rowAction?.type === "terminate"}
           onOpenChange={() => setRowAction(null)}
           user={rowAction?.row.original}
         />

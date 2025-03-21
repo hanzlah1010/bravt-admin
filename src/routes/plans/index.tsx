@@ -13,6 +13,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb"
+import { SnapshotCostCard } from "./_components/snapshot-cost-card"
 
 const CreatePlanDialog = lazy(() => import("./_components/create-plan-dialog"))
 
@@ -48,8 +49,14 @@ export default function Plans() {
             New Plan
           </Button>
         </div>
-
         <PlansTable />
+
+        <div className="space-y-3 border-t pt-3">
+          <h1 className="whitespace-nowrap font-serif text-3xl font-medium md:text-4xl">
+            Snapshot
+          </h1>
+          <SnapshotCostCard />
+        </div>
       </div>
     </>
   )
