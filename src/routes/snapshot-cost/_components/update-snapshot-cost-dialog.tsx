@@ -69,7 +69,7 @@ export default function UpdateSnapshotCostDialog({
   }
 
   useEffect(() => {
-    if (prevCost) form.reset({ cost: prevCost })
+    if (prevCost !== undefined) form.reset({ cost: prevCost })
   }, [prevCost, form])
 
   return (

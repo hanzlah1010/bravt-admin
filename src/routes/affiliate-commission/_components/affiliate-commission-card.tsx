@@ -1,28 +1,30 @@
-import { lazy, useState } from "react"
+import { lazy, Suspense, useState } from "react"
 import { Edit } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn, formatPrice } from "@/lib/utils"
-import { useSnapshotCostQuery } from "@/queries/use-snapshot-cost-query"
+import { useAffiliateCommissionQuery } from "@/queries/use-affiliate-commission-query"
 
-const UpdateSnapshotCostDialog = lazy(
-  () => import("./update-snapshot-cost-dialog")
+const UpdateAffiliateCommissionDialog = lazy(
+  () => import("./update-affiliate-commission-dialog")
 )
 
-export function SnapshotCostCard() {
-  const { data, isLoading } = useSnapshotCostQuery()
+export function AffiliateCommissionCard() {
+  const { data, isLoading } = useAffiliateCommissionQuery()
   const isEmpty = data === null || data === undefined
 
   const [open, setOpen] = useState(false)
 
   return (
     <>
-      <UpdateSnapshotCostDialog
-        prevCost={data}
-        open={open}
-        onOpenChange={setOpen}
-      />
+      <Suspense>
+        <UpdateAffiliateCommissionDialog
+          open={open}
+          prevAmount={data}
+          onOpenChange={setOpen}
+        />
+      </Suspense>
       <div className="flex w-full items-center justify-between rounded-xl bg-card px-6 py-4 text-card-foreground">
         {isLoading ? (
           <Skeleton className="h-9 w-28" />
@@ -32,7 +34,7 @@ export function SnapshotCostCard() {
               "text-destructive": isEmpty
             })}
           >
-            {isEmpty ? "Not Set" : formatPrice(data)}
+            {isEmpty ? "Not Set" : formatPrice(data / 100, 0, "percent")}
           </h1>
         )}
 

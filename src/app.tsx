@@ -27,6 +27,8 @@ const ApiKeys = lazy(() => import("@/routes/api-keys"))
 const Impersonation = lazy(() => import("@/routes/impersonation"))
 const GlobalSnapshots = lazy(() => import("@/routes/global-snapshots"))
 const Login = lazy(() => import("@/routes/login"))
+const SnapshotCost = lazy(() => import("@/routes/snapshot-cost"))
+const AffiliateCommission = lazy(() => import("@/routes/affiliate-commission"))
 
 const LOGIN_ROUTE = "/admin-Nm5K3V2pF1L7XjQ8Y@R9Tb4Z"
 
@@ -71,6 +73,11 @@ export function App() {
           <Route path="/instances" element={<Instances />} />
           <Route path="/api-keys" element={<ApiKeys />} />
           <Route path="/global-snapshots" element={<GlobalSnapshots />} />
+          <Route path="/snapshot-cost" element={<SnapshotCost />} />
+          <Route
+            path="/affiliate-commission"
+            element={<AffiliateCommission />}
+          />
           <Route path="/notifications">
             <Route index element={<Notifications />} />
             <Route path="create" element={<CreateNotification />} />
