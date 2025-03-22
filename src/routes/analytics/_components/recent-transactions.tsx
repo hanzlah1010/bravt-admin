@@ -18,7 +18,7 @@ export function RecentTransactions() {
   const { data, isPending } = useRecentTransactionsQuery()
 
   return (
-    <Card className="h-fit">
+    <Card className="relative mb-3">
       <CardHeader>
         <CardTitle>Recent Sales</CardTitle>
         <CardDescription>
@@ -72,7 +72,7 @@ export function RecentTransactions() {
               ))}
         </ul>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-card via-card to-transparent">
         <Button asChild variant="outline" className="mx-auto">
           <Link to="/transactions">View all</Link>
         </Button>

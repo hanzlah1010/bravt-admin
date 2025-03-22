@@ -1,22 +1,10 @@
 import { useMemo } from "react"
 import { isSameMonth, parseISO } from "date-fns"
-import {
-  ArrowDown,
-  ArrowUp,
-  CreditCard,
-  Crown,
-  Server,
-  Users
-} from "lucide-react"
+import { CreditCard, Crown, Server, TicketCheck, Users } from "lucide-react"
 
-import { cn, formatPrice } from "@/lib/utils"
-import { Skeleton } from "@/components/ui/skeleton"
-import { NumberTicker } from "@/components/ui/number-ticker"
+import { StatCard } from "./stat-card"
 import { useAnalyticsQuery } from "@/queries/use-analytics-query"
 import { useInstancesQuery } from "@/queries/use-instances-query"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-import type { LucideIcon } from "lucide-react"
 
 export function AnalyticsCards() {
   const { data: analytics, isPending: isAnalyticsPending } = useAnalyticsQuery()
@@ -56,8 +44,8 @@ export function AnalyticsCards() {
 
   if (isAnalyticsPending) {
     return (
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
+      <div className="flex w-full flex-wrap gap-3">
+        {Array.from({ length: 5 }).map((_, i) => (
           <StatCard.Skeleton key={i} />
         ))}
       </div>
@@ -69,7 +57,7 @@ export function AnalyticsCards() {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="flex w-full flex-wrap gap-3">
       <StatCard
         title="Total Revenue"
         total={analytics.transactions.total}
@@ -95,6 +83,14 @@ export function AnalyticsCards() {
         icon={Crown}
       />
 
+      <StatCard
+        title="Active Tickets"
+        total={analytics.activeTickets.total}
+        current={analytics.activeTickets.newThisMonth}
+        growth={analytics.activeTickets.growthPercentage}
+        icon={TicketCheck}
+      />
+
       {isInstancesPending ? (
         <StatCard.Skeleton />
       ) : (
@@ -107,79 +103,5 @@ export function AnalyticsCards() {
         />
       )}
     </div>
-  )
-}
-
-type StatCardProps = {
-  title: string
-  icon: LucideIcon
-  total: number
-  current: number
-  growth: number
-  style?: keyof Intl.NumberFormatOptionsStyleRegistry
-}
-
-function StatCard({
-  title,
-  total,
-  growth,
-  current,
-  style = "decimal",
-  icon: Icon
-}: StatCardProps) {
-  const isPositive = growth > 0
-
-  return (
-    <Card className="relative overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {title}
-        </CardTitle>
-        <Icon className="size-4 shrink-0 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <NumberTicker
-          value={total}
-          formatStyle={style}
-          className="text-2xl font-bold"
-        />
-        <div className="mt-4 flex items-center justify-between">
-          <p className="text-xs text-muted-foreground">
-            {formatPrice(current, 2, style)} this month
-          </p>
-          <div
-            className={cn(
-              "flex items-center gap-1 text-xs font-medium",
-              isPositive ? "text-success-foreground" : "text-destructive"
-            )}
-          >
-            {isPositive ? (
-              <ArrowUp className="size-3.5" />
-            ) : (
-              <ArrowDown className="size-3.5" />
-            )}
-            {formatPrice(growth / 100, 2, "percent")}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
-
-StatCard.Skeleton = () => {
-  return (
-    <Card className="relative overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <Skeleton className="h-4 w-[100px]" />
-        <Skeleton className="size-4 shrink-0" />
-      </CardHeader>
-      <CardContent>
-        <Skeleton className="mb-4 h-8 w-[150px]" />
-        <div className="mt-4 flex items-center justify-between">
-          <Skeleton className="h-4 w-[100px]" />
-          <Skeleton className="h-4 w-[60px]" />
-        </div>
-      </CardContent>
-    </Card>
   )
 }

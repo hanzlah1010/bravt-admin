@@ -62,7 +62,7 @@ export function InstancesChart() {
   }, [data])
 
   return (
-    <Card className="h-fit">
+    <Card>
       <CardHeader className="items-center pb-0 text-center">
         <CardTitle>Instances</CardTitle>
         <CardDescription>

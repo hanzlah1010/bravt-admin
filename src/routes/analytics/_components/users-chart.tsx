@@ -39,7 +39,7 @@ export function UsersChart() {
   const { data } = useUserStatsQuery(year)
 
   return (
-    <Card className="h-fit">
+    <Card className="mb-3">
       <CardHeader className="flex-row items-start justify-between gap-3 space-y-0">
         <div className="space-y-1.5">
           <CardTitle>User joined during year {year}</CardTitle>

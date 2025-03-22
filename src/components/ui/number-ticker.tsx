@@ -30,7 +30,7 @@ export function NumberTicker({
   }, [spring, value])
 
   return (
-    <motion.span className={cn("tabular-nums", className)}>
+    <motion.span className={cn("whitespace-nowrap tabular-nums", className)}>
       {display}
     </motion.span>
   )

@@ -1,3 +1,5 @@
+import Masonry from "react-masonry-css"
+
 import { AppHeader } from "@/components/app-header"
 import { AnalyticsCards } from "./_components/analytics-cards"
 import { UsersChart } from "./_components/users-chart"
@@ -25,15 +27,17 @@ export default function Analytics() {
       </AppHeader>
 
       <AnalyticsCards />
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-[0.6fr_0.4fr]">
+
+      <Masonry
+        breakpointCols={{ default: 2, 1024: 1 }}
+        className="gap-3 lg:flex lg:w-full"
+        columnClassName="lg:first:!w-[60%] lg:last:!w-[40%]"
+      >
         <UsersChart />
         <RecentTransactions />
-      </div>
-
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-[0.6fr_0.4fr]">
         <TransactionsChart />
         <InstancesChart />
-      </div>
+      </Masonry>
     </div>
   )
 }

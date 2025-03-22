@@ -6,8 +6,7 @@ import {
   SettingsIcon,
   ChevronRightIcon,
   LayoutDashboardIcon,
-  HeadsetIcon,
-  BadgeCheckIcon
+  HeadsetIcon
 } from "lucide-react"
 
 import { APIKeySwitcher } from "./api-key-switcher"
@@ -61,6 +60,7 @@ const items = [
     subItems: [
       { label: "Activity Logs", url: "/activity-logs" },
       { label: "Notifications", url: "/notifications" },
+      { label: "Affiliate Commission", url: "/affiliate-commission" },
       { label: "API Keys", url: "/api-keys" }
     ]
   }
@@ -100,18 +100,6 @@ export function AppSidebar() {
                 <Link to="/">
                   <LayoutDashboardIcon />
                   Dashboard
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === "/affiliate-commission"}
-              >
-                <Link to="/affiliate-commission">
-                  <BadgeCheckIcon />
-                  Affiliate Commission
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

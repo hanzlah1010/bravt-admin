@@ -3,7 +3,10 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query"
 
 export function useAnalyticsQuery() {
   return useQuery<
-    Record<"users" | "transactions" | "subscribedUsers", AnalyticsData>
+    Record<
+      "users" | "transactions" | "subscribedUsers" | "activeTickets",
+      AnalyticsData
+    >
   >({
     queryKey: ["analytics"],
     placeholderData: keepPreviousData,
