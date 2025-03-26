@@ -10,7 +10,10 @@ export function useApiKeysQuery(enabled = true) {
     placeholderData: keepPreviousData,
     queryKey: ["api-keys"],
     queryFn: async () => {
-      const { data } = await api.get<ApiKeys[]>("/admin/api-keys")
+      const { data } =
+        await api.get<(ApiKeys & { instancesCreated: number })[]>(
+          "/admin/api-keys"
+        )
       return data
     }
   })
