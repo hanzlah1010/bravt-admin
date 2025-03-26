@@ -218,13 +218,23 @@ export interface TicketMessage {
   message: string
   deleted?: Date
   seen?: Date
-  images: string[]
   createdAt: Date
   updatedAt: Date
   senderId: string
   sender: User
   ticketId: string
   ticket: Ticket
+  files: TicketFile[]
+}
+
+export interface TicketFile {
+  id: string
+  url: string
+  size: number
+  createdAt: Date
+  updatedAt: Date
+  messageId: string
+  message: TicketMessage
 }
 
 export interface Notification {

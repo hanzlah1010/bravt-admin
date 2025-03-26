@@ -3,7 +3,7 @@ import TextareaAutosize from "react-textarea-autosize"
 import { toast } from "sonner"
 import { PaperclipIcon, SendHorizontalIcon, XIcon } from "lucide-react"
 import { useParams } from "react-router"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { api } from "@/lib/api"
 import { Label } from "@/components/ui/label"
@@ -49,6 +49,8 @@ function Form() {
   const { updateTicket } = useTicketsQuery(false)
   const { addMessage } = useTicketMessagesQuery(false)
 
+  const queryClient = useQueryClient()
+
   const { mutate: sendMessage, isPending } = useMutation({
     mutationFn: async () => {
       const formData = new FormData()
@@ -62,9 +64,13 @@ function Form() {
     },
     onSuccess: (message) => {
       setMessage("")
-      setFiles([])
       addMessage(message)
       updateTicket(message.ticketId, { lastMessageAt: message.createdAt })
+      if (files.length) {
+        queryClient.invalidateQueries({ queryKey: ["upload-size"] })
+      }
+
+      setTimeout(() => setFiles([]), 0)
     },
     onError: (error) => toast.error(getErrorMessage(error)),
     onSettled: () => setTimeout(() => textareaRef.current?.focus(), 50)

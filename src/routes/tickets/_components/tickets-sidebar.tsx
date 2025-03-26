@@ -3,7 +3,7 @@ import { Link, useLocation, useParams } from "react-router"
 import { parseAsBoolean, useQueryState } from "nuqs"
 
 import { TicketsList } from "./tickets-list"
-import { cn } from "@/lib/utils"
+import { cn, formatBytes } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useDebouncedQueryState } from "@/hooks/use-debounced-query-state"
 import {
@@ -14,6 +14,7 @@ import {
   SidebarInput,
   useSidebar
 } from "@/components/ui/sidebar"
+import { useUploadSizeQuery } from "@/queries/use-upload-size-query"
 
 export function TicketsSidebar() {
   const [search, setSearch] = useDebouncedQueryState("search")
@@ -26,6 +27,8 @@ export function TicketsSidebar() {
   const { ticketId } = useParams()
   const { isMobile } = useSidebar()
   const isTicketDetails = pathname === `/tickets/${ticketId}`
+
+  const { isPending: isFetchingSize, uploadSize } = useUploadSizeQuery()
 
   return (
     <Sidebar showMobileSheet={isTicketDetails}>
@@ -42,6 +45,9 @@ export function TicketsSidebar() {
             </Link>
           </Button>
           <h1 className="text-lg font-semibold">Tickets</h1>
+          <p className="ml-auto text-sm text-muted-foreground">
+            ({isFetchingSize ? "..." : formatBytes(uploadSize)})
+          </p>
         </div>
 
         <div className="px-3">
