@@ -53,8 +53,11 @@ export function MessageBubble({ message }: MessageBubbleProps) {
               isAdminMessage ? "bg-primary text-primary-foreground" : "bg-muted"
             )}
           >
-            {message.images.map((image) => (
-              <Zoom zoomImg={{ src: image, draggable: false }}>
+            {message.images.map((image, idx) => (
+              <Zoom
+                key={`${image}-${idx}`}
+                zoomImg={{ src: image, draggable: false }}
+              >
                 <img
                   src={image}
                   alt="Image"

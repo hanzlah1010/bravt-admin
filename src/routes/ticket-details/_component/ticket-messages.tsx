@@ -81,13 +81,9 @@ export function TicketMessages() {
         initialLoad.current = false
       })
 
-      setTimeout(() => {
-        scrollToBottom("smooth")
-      }, 50)
+      setTimeout(() => scrollToBottom("smooth"), 50)
     } else {
-      setTimeout(() => {
-        scrollToBottom("smooth")
-      }, 50)
+      setTimeout(() => scrollToBottom(), 50)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
