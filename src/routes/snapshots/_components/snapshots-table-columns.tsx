@@ -100,7 +100,7 @@ export function getColumns({
       id: "actions",
       cell: ({ row }) => (
         <Button
-          aria-label="Delete iso"
+          aria-label="Delete snapshot"
           size="icon"
           variant="ghost"
           onClick={() => setRowAction({ row, type: "delete" })}

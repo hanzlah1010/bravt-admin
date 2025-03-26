@@ -1,6 +1,3 @@
-// AUTO GENERATED FILE BY @kalissaac/prisma-typegen
-// DO NOT EDIT
-
 export enum USER_ROLE {
   USER = "USER",
   ADMIN = "ADMIN"
@@ -104,6 +101,11 @@ export interface User {
   instanceCreateLimit: number
   dailyInstanceLimit: number
   dailyDeleteLimit: number
+  suspended?: Date
+  invitedById?: string
+  invitedBy?: User
+  referrals: User[]
+  inviteTransactions: Transaction[]
   recoveryCodes: RecoveryCode[]
   tickets: Ticket[]
   refreshTokens: RefreshToken[]
@@ -112,7 +114,6 @@ export interface User {
   activities: Activity[]
   notifications: NotificationRecipient[]
   messagesSent: TicketMessage[]
-  messagesReceived: TicketMessage[]
   verificationTokens: Verification[]
 }
 
@@ -168,6 +169,7 @@ export interface Resource {
   password?: string
   createdAt: Date
   deletedAt?: Date
+  suspended?: Date
   type: RESOURCE_TYPE
   userId: string
   user: User
@@ -182,6 +184,8 @@ export interface Transaction {
   status: PAYMENT_STATUS
   createdAt: Date
   updatedAt: Date
+  invitedById?: string
+  invitedBy?: User
   userId: string
   user: User
 }
@@ -214,12 +218,11 @@ export interface TicketMessage {
   message: string
   deleted?: Date
   seen?: Date
+  images: string[]
   createdAt: Date
   updatedAt: Date
   senderId: string
   sender: User
-  receiverId?: string
-  receiver?: User
   ticketId: string
   ticket: Ticket
 }
@@ -248,10 +251,9 @@ export interface ApiKeys {
   key: string
   name: string
   active: boolean
+  instancesLimit: number
   createdAt: Date
   updatedAt: Date
-  instancesLimit: number
-  instancesCreated: number
 }
 
 export interface PaymentKey {
@@ -265,4 +267,9 @@ export interface PaymentKey {
 export interface SnapshotCost {
   id: string
   cost: number
+}
+
+export interface AffiliateCommission {
+  id: string
+  amount: number
 }

@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-query"
 
 import { api } from "@/lib/api"
+import { useSocket } from "@/providers/socket-provider"
 
 import type { Ticket, TicketMessage } from "@/types/db"
 import type { InfiniteData } from "@tanstack/react-query"
@@ -14,11 +15,13 @@ import type { InfiniteData } from "@tanstack/react-query"
 export function useTicketMessagesQuery(enabled = true) {
   const { ticketId } = useParams()
   const queryClient = useQueryClient()
+  const { isConnected } = useSocket()
 
   const { data, ...query } = useInfiniteQuery({
     enabled,
     queryKey: ["ticket-messages", ticketId],
     placeholderData: keepPreviousData,
+    refetchInterval: isConnected ? undefined : 1000,
     queryFn: async ({ pageParam }) => {
       const { data } = await api.get<MessagesWithCursor>(
         `/tickets/${ticketId}/messages/?cursor=${pageParam || ""}`

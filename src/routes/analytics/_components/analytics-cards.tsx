@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { isSameMonth, parseISO } from "date-fns"
-import { CreditCard, Crown, Server, TicketCheck, Users } from "lucide-react"
+import { CreditCard, Server, TicketCheck, Users } from "lucide-react"
 
 import { StatCard } from "./stat-card"
 import { useAnalyticsQuery } from "@/queries/use-analytics-query"
@@ -45,7 +45,7 @@ export function AnalyticsCards() {
   if (isAnalyticsPending) {
     return (
       <div className="flex w-full flex-wrap gap-3">
-        {Array.from({ length: 5 }).map((_, i) => (
+        {Array.from({ length: 4 }).map((_, i) => (
           <StatCard.Skeleton key={i} />
         ))}
       </div>
@@ -73,14 +73,6 @@ export function AnalyticsCards() {
         current={analytics.users.newThisMonth}
         growth={analytics.users.growthPercentage}
         icon={Users}
-      />
-
-      <StatCard
-        title="Subscribed Users"
-        total={analytics.subscribedUsers.total}
-        current={analytics.subscribedUsers.newThisMonth}
-        growth={analytics.subscribedUsers.growthPercentage}
-        icon={Crown}
       />
 
       <StatCard

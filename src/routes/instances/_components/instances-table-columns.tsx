@@ -1,20 +1,36 @@
 import { formatDate } from "date-fns"
+import { Archive, ArchiveRestore } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
+import { Spinner } from "@/components/ui/spinner"
+import { Button } from "@/components/ui/button"
 import {
   cn,
   formatPrice,
   isInstanceInstalling,
   toSentenceCase
 } from "@/lib/utils"
-import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 
 import type { ColumnDef } from "@tanstack/react-table"
 import type { Resource } from "@/types/db"
 import type { VultrInstance } from "@/types/vultr"
-import { Spinner } from "@/components/ui/spinner"
+import type { DataTableRowAction } from "@/types"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip"
 
-export function getColumns(): ColumnDef<VultrInstance & Resource>[] {
+interface GetColumnsProps {
+  setRowAction: React.Dispatch<
+    React.SetStateAction<DataTableRowAction<VultrInstance & Resource> | null>
+  >
+}
+
+export function getColumns({
+  setRowAction
+}: GetColumnsProps): ColumnDef<VultrInstance & Resource>[] {
   return [
     {
       accessorKey: "label",
@@ -88,6 +104,18 @@ export function getColumns(): ColumnDef<VultrInstance & Resource>[] {
       )
     },
     {
+      accessorKey: "suspended",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Suspended" />
+      ),
+      cell: ({ row }) =>
+        row.original.suspended ? (
+          <Badge variant="destructive">Suspended</Badge>
+        ) : (
+          <span className="italic text-muted-foreground">N/A</span>
+        )
+    },
+    {
       accessorKey: "user",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="User" />
@@ -106,6 +134,37 @@ export function getColumns(): ColumnDef<VultrInstance & Resource>[] {
           {formatDate(cell.getValue() as Date, "PP hh:mm aa")}
         </span>
       )
+    },
+    {
+      id: "suspend",
+      cell: ({ row }) => {
+        const suspended = !!row.original.suspended
+
+        return (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                aria-label={
+                  suspended ? "Unsuspend instance" : "Suspend instance"
+                }
+                size="icon"
+                variant="ghost"
+                onClick={(evt) => {
+                  evt.preventDefault()
+                  evt.stopPropagation()
+                  setRowAction({ row, type: "suspend" })
+                }}
+              >
+                {suspended ? <ArchiveRestore /> : <Archive />}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {suspended ? "Unsuspend instance" : "Suspend instance"}
+            </TooltipContent>
+          </Tooltip>
+        )
+      },
+      size: 40
     }
   ]
 }

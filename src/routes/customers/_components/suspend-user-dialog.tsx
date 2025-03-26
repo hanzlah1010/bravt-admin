@@ -17,27 +17,27 @@ import {
 
 import type { User } from "@/types/db"
 
-type TerminateUserDialogProps = {
+type SuspendUserDialogProps = {
   open: boolean
   onOpenChange: () => void
   user?: User
 }
 
-export default function TerminateUserDialog({
+export default function SuspendUserDialog({
   user,
   open,
   onOpenChange
-}: TerminateUserDialogProps) {
+}: SuspendUserDialogProps) {
   const queryClient = useQueryClient()
 
-  const { isPending, mutate: terminateUser } = useMutation({
+  const { isPending, mutate: toggleUserSuspension } = useMutation({
     mutationFn: async () => {
       if (!user) throw "No user"
-      await api.post(`/admin/user/terminate/${user.id}`)
+      await api.post(`/admin/user/suspend/${user.id}`)
     },
     onSuccess: () => {
+      toast.success(user?.suspended ? "User unsuspended" : "User suspended")
       queryClient.invalidateQueries({ queryKey: ["users"] })
-      toast.success("User terminated!")
     },
     onError: handleError,
     onSettled: onOpenChange
@@ -47,12 +47,17 @@ export default function TerminateUserDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>
+            {user?.suspended ? "Confirm Unsuspension" : "Confirm Suspension"}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            User{" "}
-            <span className="font-medium text-foreground">{user?.email}</span>{" "}
-            will be terminated & all data related to this user will be deleted
-            permanently! This action can&apos;t be undone!
+            Are you sure you want to {user?.suspended ? "unsuspend" : "suspend"}{" "}
+            <span className="font-medium text-foreground">{user?.email}</span>?
+            This action will{" "}
+            {user?.suspended
+              ? "restore their access"
+              : "stop all instances immediately"}
+            .
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -65,11 +70,11 @@ export default function TerminateUserDialog({
 
           <AlertDialogAction asChild>
             <Button
-              variant="destructive"
               loading={isPending}
-              onClick={() => terminateUser()}
+              variant={user?.suspended ? "default" : "destructive"}
+              onClick={() => toggleUserSuspension()}
             >
-              Terminate
+              {user?.suspended ? "Unsuspend User" : "Suspend User"}
             </Button>
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -8,6 +8,7 @@ export function useSessionQuery(enabled = false) {
   const { data, ...query } = useQuery({
     enabled,
     queryKey: ["session"],
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       const { data } = await api.get<User & { impersonatedBy?: string }>(
         "/auth/session"

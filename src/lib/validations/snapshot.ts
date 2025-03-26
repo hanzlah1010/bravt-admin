@@ -2,8 +2,7 @@ import { GLOBAL_SNAPSHOT_TYPE } from "@/types/db"
 import { z } from "zod"
 
 export const createGlobalSnapshotSchema = z.object({
-  url: z.string().min(1, "Url is required"),
-  description: z.string().min(1, "Description is required"),
+  id: z.string().min(1, "Snapshot ID is required").uuid("Invalid ID"),
   type: z.nativeEnum(GLOBAL_SNAPSHOT_TYPE, {
     required_error: "Please select snapshot type"
   })

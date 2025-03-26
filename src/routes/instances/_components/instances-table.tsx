@@ -8,13 +8,21 @@ import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { InstancesTableToolbarActions } from "./instances-table-toolbar-actions"
 
-import type { DataTableFilterField } from "@/types"
+import type { DataTableFilterField, DataTableRowAction } from "@/types"
 import type { VultrInstance } from "@/types/vultr"
 import type { Resource } from "@/types/db"
 
+const SuspendInstanceDialog = React.lazy(
+  () => import("./suspend-instance-dialog")
+)
+
 export function InstancesTable() {
   const { data, error, isPending } = useInstancesQuery()
-  const columns = React.useMemo(() => getColumns(), [])
+  const [rowAction, setRowAction] = React.useState<DataTableRowAction<
+    Resource & VultrInstance
+  > | null>(null)
+
+  const columns = React.useMemo(() => getColumns({ setRowAction }), [])
 
   const filterFields: DataTableFilterField<VultrInstance & Resource>[] = [
     {
@@ -68,20 +76,30 @@ export function InstancesTable() {
   }
 
   return (
-    <DataTable
-      table={table}
-      withPagination={false}
-      error={error}
-      onRowClick={(instance) => {
-        window.open(
-          `${import.meta.env.VITE_CONSOLE_URL}/instance/${instance.id}`,
-          "_blank"
-        )
-      }}
-    >
-      <DataTableToolbar table={table} filterFields={filterFields}>
-        <InstancesTableToolbarActions table={table} />
-      </DataTableToolbar>
-    </DataTable>
+    <>
+      <DataTable
+        table={table}
+        withPagination={false}
+        error={error}
+        onRowClick={(instance) => {
+          window.open(
+            `${import.meta.env.VITE_CONSOLE_URL}/instance/${instance.id}`,
+            "_blank"
+          )
+        }}
+      >
+        <DataTableToolbar table={table} filterFields={filterFields}>
+          <InstancesTableToolbarActions table={table} />
+        </DataTableToolbar>
+      </DataTable>
+
+      <React.Suspense>
+        <SuspendInstanceDialog
+          open={rowAction?.type === "suspend"}
+          onOpenChange={() => setRowAction(null)}
+          instance={rowAction?.row.original}
+        />
+      </React.Suspense>
+    </>
   )
 }

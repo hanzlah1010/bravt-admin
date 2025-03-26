@@ -1,4 +1,7 @@
-import { lazy, useState, Suspense } from "react"
+import "react-medium-image-zoom/dist/styles.css"
+
+import * as React from "react"
+import Zoom from "react-medium-image-zoom"
 import { toast } from "sonner"
 import { formatDate } from "date-fns"
 import { CheckCheckIcon, Copy, EllipsisVertical, Trash2 } from "lucide-react"
@@ -15,14 +18,14 @@ import {
 
 import type { TicketMessage } from "@/types/db"
 
-const DeleteMessageDialog = lazy(() => import("./delete-message-dialog"))
+const DeleteMessageDialog = React.lazy(() => import("./delete-message-dialog"))
 
 type MessageBubbleProps = {
   message: TicketMessage
 }
 
 export function MessageBubble({ message }: MessageBubbleProps) {
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
 
   const isAdminMessage = message.sender.role === USER_ROLE.ADMIN
 
@@ -37,17 +40,33 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
   return (
     <>
-      <li className="group/message ml-auto flex w-full flex-row-reverse items-center gap-3">
+      <li
+        className={cn(
+          "group/message flex w-full items-center gap-3",
+          isAdminMessage ? "ml-auto flex-row-reverse" : "mr-auto"
+        )}
+      >
         <div className="w-fit max-w-full md:max-w-lg">
-          <p
+          <div
             className={cn(
-              "whitespace-pre-wrap break-words rounded-lg px-3 py-1.5 text-sm font-medium md:max-w-lg",
+              "flex flex-col gap-2 rounded-lg p-2 md:max-w-lg",
               isAdminMessage ? "bg-primary text-primary-foreground" : "bg-muted"
             )}
           >
-            {message.message}
-          </p>
+            {message.images.map((image) => (
+              <Zoom zoomImg={{ src: image, draggable: false }}>
+                <img
+                  src={image}
+                  alt="Image"
+                  className="min-w-[300px] rounded-md object-contain"
+                />
+              </Zoom>
+            ))}
 
+            <p className="whitespace-pre-wrap break-words text-sm font-medium">
+              {message.message}
+            </p>
+          </div>
           <div
             className={cn("mt-1 flex items-center gap-2", {
               "justify-end": !isAdminMessage
@@ -99,13 +118,13 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         </DropdownMenu>
       </li>
 
-      <Suspense>
+      <React.Suspense>
         <DeleteMessageDialog
           id={message.id}
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
         />
-      </Suspense>
+      </React.Suspense>
     </>
   )
 }

@@ -107,3 +107,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+[data-rmiz-modal-overlay="visible"] {
+  @apply !bg-background/70 backdrop-blur-sm;
+}
+
+[data-rmiz-btn-unzoom] {
+  @apply !bg-foreground !text-background;
+}

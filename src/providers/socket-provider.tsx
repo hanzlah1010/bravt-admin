@@ -1,12 +1,14 @@
-import { useTicketMessageSocket } from "@/sockets/use-ticket-message-socket"
-import { useTicketsSocket } from "@/sockets/use-tickets-socket"
 import * as React from "react"
 import { io } from "socket.io-client"
+
+import { useTicketsSocket } from "@/sockets/use-tickets-socket"
+import { useTicketMessageSocket } from "@/sockets/use-ticket-message-socket"
 
 import type { Socket } from "socket.io-client"
 
 interface SocketContextType {
   socket: Socket | null
+  isConnected: boolean
 }
 
 const SocketContext = React.createContext<SocketContextType | undefined>(
@@ -18,6 +20,8 @@ interface SocketProviderProps {
 }
 
 export function SocketProvider({ children }: SocketProviderProps) {
+  const [isConnected, setIsConnected] = React.useState(false)
+
   const socket = React.useMemo(
     () =>
       io(import.meta.env.VITE_API_URL, {
@@ -28,14 +32,23 @@ export function SocketProvider({ children }: SocketProviderProps) {
   )
 
   React.useEffect(() => {
+    const handleConnect = () => setIsConnected(true)
+    const handleDisconnect = () => setIsConnected(false)
+
     socket.connect()
+    socket.on("connect", handleConnect)
+    socket.on("disconnect", handleDisconnect)
 
     return () => {
       socket.disconnect()
+      socket.off("connect", handleConnect)
+      socket.off("disconnect", handleDisconnect)
     }
   }, [socket])
 
-  return <SocketContext value={{ socket }}>{children}</SocketContext>
+  return (
+    <SocketContext value={{ socket, isConnected }}>{children}</SocketContext>
+  )
 }
 
 export const useSocket = (): SocketContextType => {

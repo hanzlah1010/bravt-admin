@@ -107,7 +107,7 @@ export function getColumns({
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Credits" />
       ),
-      cell: ({ row }) => formatPrice(row.original.credits)
+      cell: ({ row }) => formatPrice(row.original.credits, 3)
     },
     {
       accessorKey: "isSubscribed",
@@ -117,6 +117,18 @@ export function getColumns({
       cell: ({ row }) =>
         row.original.isSubscribed ? (
           <Badge variant="success">Subscribed</Badge>
+        ) : (
+          <span className="italic text-muted-foreground">N/A</span>
+        )
+    },
+    {
+      accessorKey: "suspended",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Suspended" />
+      ),
+      cell: ({ row }) =>
+        row.original.suspended ? (
+          <Badge variant="destructive">Suspended</Badge>
         ) : (
           <span className="italic text-muted-foreground">N/A</span>
         )
@@ -185,10 +197,9 @@ export function getColumns({
             </DropdownMenuItem>
 
             <DropdownMenuItem
-              onSelect={() => setRowAction({ row, type: "terminate" })}
-              className="text-destructive focus:bg-destructive focus:text-destructive-foreground"
+              onSelect={() => setRowAction({ row, type: "suspend" })}
             >
-              Terminate
+              {row.original.suspended ? "Unsuspend" : "Suspend"}
             </DropdownMenuItem>
 
             <DropdownMenuItem

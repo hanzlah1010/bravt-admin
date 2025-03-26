@@ -75,28 +75,22 @@ export function TicketMessages() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
   React.useEffect(() => {
-    const container = containerRef.current
-    if (!container || !data.length) return
+    if (initialLoad.current && containerRef.current) {
+      requestAnimationFrame(() => {
+        containerRef.current!.scrollTop = containerRef.current!.scrollHeight
+        initialLoad.current = false
+      })
 
-    if (initialLoad.current) {
-      scrollToBottom("auto")
-      initialLoad.current = false
+      setTimeout(() => {
+        scrollToBottom("smooth")
+      }, 50)
     } else {
-      const isNearBottom =
-        container.scrollHeight - container.scrollTop - container.clientHeight <
-        400
-
-      if (isNearBottom) {
-        scrollToBottom()
-      }
+      setTimeout(() => {
+        scrollToBottom("smooth")
+      }, 50)
     }
-  }, [data, scrollToBottom])
-
-  React.useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight
-    }
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data])
 
   const groupedMessages = React.useMemo(() => {
     return data.reduce<Record<string, TicketMessage[]>>((grouped, msg) => {

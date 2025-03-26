@@ -9,7 +9,8 @@
     "build": "tsc -b && vite build --mode production",
     "lint": "eslint .",
     "preview": "vite preview --port 3001",
-    "ui:add": "bunx shadcn@latest add"
+    "ui:add": "bunx shadcn@latest add",
+    "zip:build": "rm -rf admin-dist.zip && zip -r admin-dist.zip dist "
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -46,8 +47,10 @@
     "react": "^19.0.0",
     "react-day-picker": "8.10.1",
     "react-dom": "^19.0.0",
+    "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.54.2",
     "react-masonry-css": "^1.0.16",
+    "react-medium-image-zoom": "^5.2.14",
     "react-number-format": "^5.4.3",
     "react-router": "^7.1.5",
     "react-textarea-autosize": "^8.5.7",

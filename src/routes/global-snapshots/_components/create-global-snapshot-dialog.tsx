@@ -44,10 +44,7 @@ export default function CreateGlobalSnapshotDialog() {
 
   const form = useForm<CreateGlobalSnapshotSchema>({
     resolver: zodResolver(createGlobalSnapshotSchema),
-    defaultValues: {
-      url: "",
-      description: ""
-    }
+    defaultValues: { id: "" }
   })
 
   const { mutate: create, isPending } = useMutation({
@@ -55,7 +52,7 @@ export default function CreateGlobalSnapshotDialog() {
       await api.post("/admin/global-snapshot", values)
     },
     onSuccess: () => {
-      onOpenChange(false)
+      handleOpenChange(false)
       queryClient.invalidateQueries({ queryKey: ["global-snapshots"] })
       toast.success("Global snapshot created!")
     },
@@ -64,8 +61,13 @@ export default function CreateGlobalSnapshotDialog() {
 
   const onSubmit = form.handleSubmit((values) => create(values))
 
+  const handleOpenChange = (open: boolean) => {
+    onOpenChange(open)
+    if (!open) setTimeout(() => form.reset(), 300)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create global snapshot</DialogTitle>
@@ -78,32 +80,17 @@ export default function CreateGlobalSnapshotDialog() {
           <form onSubmit={onSubmit} className="space-y-3">
             <FormField
               control={form.control}
-              name="url"
+              name="id"
               disabled={isPending}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL</FormLabel>
+                  <FormLabel>Snapshot ID</FormLabel>
                   <FormControl>
                     <Input
                       autoFocus
-                      placeholder="https://snapshot.bravtcloud.com"
+                      placeholder="32696784-ab63-4491-8c48-e2eb1eb531c2"
                       {...field}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              disabled={isPending}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Description" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -118,7 +105,11 @@ export default function CreateGlobalSnapshotDialog() {
                 <FormItem>
                   <FormLabel>Type</FormLabel>
 
-                  <Select value={field.value} onValueChange={field.onChange}>
+                  <Select
+                    disabled={isPending}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Please select snapshot type" />
