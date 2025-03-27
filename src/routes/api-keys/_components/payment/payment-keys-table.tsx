@@ -6,6 +6,7 @@ import { getErrorMessage } from "@/lib/error"
 import { Button } from "@/components/ui/button"
 import { usePaymentKeysQuery } from "@/queries/use-payment-keys-query"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
+import { Badge } from "@/components/ui/badge"
 import {
   Table,
   TableBody,
@@ -44,6 +45,7 @@ export function PaymentKeysTable() {
         <TableHeader>
           <TableRow>
             <TableHead className="pl-6">Method</TableHead>
+            <TableHead className="pl-6">Mode</TableHead>
             <TableHead>Client Id</TableHead>
             <TableHead className="pr-6 text-right">Actions</TableHead>
           </TableRow>
@@ -54,6 +56,11 @@ export function PaymentKeysTable() {
               <TableRow key={key.id}>
                 <TableCell className="pl-6 font-medium">
                   {toSentenceCase(key.type.toLowerCase())}
+                </TableCell>
+                <TableCell>
+                  <Badge variant="secondary">
+                    {toSentenceCase(key.mode.toLowerCase())}
+                  </Badge>
                 </TableCell>
                 <TableCell className="max-w-[10rem] truncate">
                   {key.clientId}

@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { PAYMENT_METHOD } from "@/types/db"
+import { PAYMENT_METHOD, PAYMENT_MODE } from "@/types/db"
 
 export const apiKeySchema = z.object({
   name: z.string().min(1, "Please enter a unique name for your api key"),
@@ -20,6 +20,9 @@ export const createPaymentKeySchema = z.object({
   webhookId: z.string().min(1, "Webhook id is required"),
   type: z.nativeEnum(PAYMENT_METHOD, {
     required_error: "Please select api key type"
+  }),
+  mode: z.nativeEnum(PAYMENT_MODE, {
+    required_error: "Please select payment mode"
   })
 })
 

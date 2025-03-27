@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { api } from "@/lib/api"
-import { PAYMENT_METHOD } from "@/types/db"
+import { PAYMENT_METHOD, PAYMENT_MODE } from "@/types/db"
 import { toSentenceCase } from "@/lib/utils"
 import { handleError } from "@/lib/error"
 import { Button } from "@/components/ui/button"
@@ -48,7 +48,8 @@ export default function CreatePaymentKeyDialog() {
     defaultValues: {
       clientId: "",
       clientSecret: "",
-      webhookId: ""
+      webhookId: "",
+      mode: PAYMENT_MODE.SANDBOX
     }
   })
 
@@ -102,6 +103,34 @@ export default function CreatePaymentKeyDialog() {
                     </FormControl>
                     <SelectContent>
                       {Object.values(PAYMENT_METHOD).map((item) => (
+                        <SelectItem key={item} value={item}>
+                          {toSentenceCase(item.toLowerCase())}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="mode"
+              disabled={isPending}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mode</FormLabel>
+
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Please select payment mode" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.values(PAYMENT_MODE).map((item) => (
                         <SelectItem key={item} value={item}>
                           {toSentenceCase(item.toLowerCase())}
                         </SelectItem>
