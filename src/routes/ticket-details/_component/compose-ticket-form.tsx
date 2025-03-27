@@ -6,42 +6,20 @@ import { useParams } from "react-router"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { api } from "@/lib/api"
-import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { getErrorMessage } from "@/lib/error"
-import { useTicketQuery } from "@/queries/use-ticket-query"
 import { useTicketsQuery } from "@/queries/use-tickets-query"
 import { useTicketMessagesQuery } from "@/queries/use-ticket-messages-query"
 import { useFilesSelect } from "@/hooks/use-files-select"
 
 import type { TicketMessage } from "@/types/db"
-import { cn } from "@/lib/utils"
 
-export function ComposeTicketForm() {
-  const { ticket } = useTicketQuery()
-
-  if (ticket.closed) {
-    return (
-      <div className="flex min-h-[73px] shrink-0 items-center justify-center gap-1 border-t p-4 text-center text-sm">
-        <div className="">
-          <span className="text-muted-foreground">
-            This ticket has been closed. If something went missing you can
-          </span>{" "}
-          <Label
-            htmlFor={"close-ticket"}
-            className="cursor-pointer whitespace-nowrap text-primary underline underline-offset-4 transition-colors hover:text-primary/80"
-          >
-            Reopen this ticket
-          </Label>
-        </div>
-      </div>
-    )
-  }
-
-  return <Form />
-}
-
-function Form() {
+export function ComposeTicketForm({
+  shouldStickToBottom
+}: {
+  shouldStickToBottom: React.RefObject<boolean>
+}) {
   const textareaRef = React.useRef<HTMLTextAreaElement>(null)
   const [message, setMessage] = React.useState("")
 
@@ -71,6 +49,7 @@ function Form() {
       }
 
       setTimeout(() => setFiles([]), 0)
+      shouldStickToBottom.current = true
     },
     onError: (error) => toast.error(getErrorMessage(error)),
     onSettled: () => setTimeout(() => textareaRef.current?.focus(), 50)
