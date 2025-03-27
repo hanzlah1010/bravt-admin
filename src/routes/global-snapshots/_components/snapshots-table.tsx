@@ -8,7 +8,7 @@ import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { SnapshotsTableToolbarActions } from "./snapshots-table-toolbar-actions"
 import { useGlobalSnapshotsQuery } from "@/queries/use-global-snapshots-query"
 
-import type { Resource } from "@/types/db"
+import type { GlobalSnapshot } from "@/types/db"
 import type { VultrSnapshot } from "@/types/vultr"
 import type { DataTableFilterField, DataTableRowAction } from "@/types"
 
@@ -16,16 +16,20 @@ const DeleteSnapshotDialog = React.lazy(
   () => import("./delete-snapshot-dialog")
 )
 
+const UpdateGlobalSnapshotDialog = React.lazy(
+  () => import("./update-snapshot-dialog")
+)
+
 export function SnapshotsTable() {
   const { data, error, isPending } = useGlobalSnapshotsQuery()
 
   const [rowAction, setRowAction] = React.useState<DataTableRowAction<
-    VultrSnapshot & Resource
+    VultrSnapshot & GlobalSnapshot
   > | null>(null)
 
   const columns = React.useMemo(() => getColumns({ setRowAction }), [])
 
-  const filterFields: DataTableFilterField<VultrSnapshot & Resource>[] = [
+  const filterFields: DataTableFilterField<VultrSnapshot & GlobalSnapshot>[] = [
     {
       id: "description",
       label: "Description",
@@ -83,6 +87,12 @@ export function SnapshotsTable() {
       <React.Suspense>
         <DeleteSnapshotDialog
           open={rowAction?.type === "delete"}
+          onOpenChange={() => setRowAction(null)}
+          snapshot={rowAction?.row.original}
+        />
+
+        <UpdateGlobalSnapshotDialog
+          open={rowAction?.type === "update"}
           onOpenChange={() => setRowAction(null)}
           snapshot={rowAction?.row.original}
         />

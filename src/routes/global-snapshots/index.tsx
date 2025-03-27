@@ -1,4 +1,4 @@
-import { lazy } from "react"
+import { lazy, Suspense } from "react"
 import { PlusCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -23,7 +23,9 @@ export default function GlobalSnapshots() {
 
   return (
     <>
-      <CreateGlobalSnapshotDialog />
+      <Suspense>
+        <CreateGlobalSnapshotDialog />
+      </Suspense>
       <div className="space-y-3 px-6 pb-4">
         <AppHeader>
           <Breadcrumb>

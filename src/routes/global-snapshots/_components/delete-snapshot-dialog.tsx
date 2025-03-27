@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import type { VultrSnapshot } from "@/types/vultr"
-import type { Resource } from "@/types/db"
+import type { GlobalSnapshot } from "@/types/db"
 
 type DeleteSnapshotDialogProps = {
   open: boolean
@@ -37,7 +37,7 @@ export default function DeleteSnapshotDialog({
       await api.delete(`/admin/global-snapshot/${snapshot?.id}`)
     },
     onSuccess: () => {
-      queryClient.setQueryData<(VultrSnapshot & Resource)[]>(
+      queryClient.setQueryData<(VultrSnapshot & GlobalSnapshot)[]>(
         ["global-snapshots"],
         (prev) => {
           if (!prev) return prev

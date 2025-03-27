@@ -12,11 +12,11 @@ import {
 import { api } from "@/lib/api"
 import { getSortingStateParser } from "@/lib/parsers"
 
-import type { Resource } from "@/types/db"
+import type { GlobalSnapshot } from "@/types/db"
 import type { VultrSnapshot } from "@/types/vultr"
 
 export function useGlobalSnapshotsQuery() {
-  const { data = [], ...query } = useQuery<(VultrSnapshot & Resource)[]>({
+  const { data = [], ...query } = useQuery<(VultrSnapshot & GlobalSnapshot)[]>({
     queryKey: ["global-snapshots"],
     placeholderData: keepPreviousData,
     queryFn: async () => {
@@ -36,21 +36,18 @@ export function useGlobalSnapshotsQuery() {
       ).withDefault([]),
       from: parseAsString,
       to: parseAsString,
-      sort: getSortingStateParser<VultrSnapshot & Resource>().withDefault([
-        { id: "date_created", desc: true }
-      ])
+      sort: getSortingStateParser<VultrSnapshot & GlobalSnapshot>().withDefault(
+        [{ id: "date_created", desc: true }]
+      )
     },
     { urlKeys: { search: "description" } }
   )
 
   const handleSort = React.useCallback(
-    (items: (VultrSnapshot & Resource)[]) => {
+    (items: (VultrSnapshot & GlobalSnapshot)[]) => {
       return orderBy(
         items,
-        sort.map((s) => {
-          if (s.id === "user") return "user.email"
-          return s.id
-        }),
+        sort.map((s) => s.id),
         sort.map((s) => (s.desc ? "desc" : "asc"))
       )
     },
@@ -70,7 +67,9 @@ export function useGlobalSnapshotsQuery() {
       data.filter((snapshot) => {
         const matchesQuery =
           snapshot.description.toLowerCase().includes(query) ||
-          snapshot.user.email.toLowerCase().includes(query)
+          snapshot.name.toLowerCase().includes(query) ||
+          snapshot.version.toLowerCase().includes(query) ||
+          snapshot.username.toLowerCase().includes(query)
 
         const matchesStatus = !status.length || status.includes(snapshot.status)
 

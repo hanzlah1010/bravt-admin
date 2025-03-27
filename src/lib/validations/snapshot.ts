@@ -1,15 +1,23 @@
-import { GLOBAL_SNAPSHOT_TYPE } from "@/types/db"
 import { z } from "zod"
 
 export const createGlobalSnapshotSchema = z.object({
   id: z.string().min(1, "Snapshot ID is required").uuid("Invalid ID"),
-  type: z.nativeEnum(GLOBAL_SNAPSHOT_TYPE, {
-    required_error: "Please select snapshot type"
-  })
+  name: z.string().min(1, "OS name is required"),
+  version: z.string().min(1, "OS version is required"),
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required")
 })
 
 export type CreateGlobalSnapshotSchema = z.infer<
   typeof createGlobalSnapshotSchema
+>
+
+export const updateGlobalSnapshotSchema = createGlobalSnapshotSchema.omit({
+  id: true
+})
+
+export type UpdateGlobalSnapshotSchema = z.infer<
+  typeof updateGlobalSnapshotSchema
 >
 
 export const updateSnapshotCostSchema = z.object({

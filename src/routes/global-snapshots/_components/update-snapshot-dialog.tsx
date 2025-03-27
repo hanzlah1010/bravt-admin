@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -10,8 +11,7 @@ import { Label } from "@/components/ui/label"
 import { handleError } from "@/lib/error"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { createGlobalSnapshotSchema } from "@/lib/validations/snapshot"
-import { useCreateGlobalSnapshotModal } from "@/hooks/use-create-global-snapshot-modal"
+import { updateGlobalSnapshotSchema } from "@/lib/validations/snapshot"
 import { PasswordInput } from "@/components/ui/password-input"
 import { useSingleFileSelect } from "@/hooks/use-single-file-select"
 import {
@@ -31,39 +31,50 @@ import {
   FormMessage
 } from "@/components/ui/form"
 
-import type { CreateGlobalSnapshotSchema } from "@/lib/validations/snapshot"
+import type { GlobalSnapshot } from "@/types/db"
+import type { UpdateGlobalSnapshotSchema } from "@/lib/validations/snapshot"
 
-export default function CreateGlobalSnapshotDialog() {
+type UpdateGlobalSnapshotDialogProps = {
+  open: boolean
+  onOpenChange: () => void
+  snapshot?: GlobalSnapshot
+}
+
+export default function UpdateGlobalSnapshotDialog({
+  open,
+  onOpenChange,
+  snapshot
+}: UpdateGlobalSnapshotDialogProps) {
   const queryClient = useQueryClient()
-  const { open, onOpenChange } = useCreateGlobalSnapshotModal()
+  const defaultValues = {
+    name: snapshot?.name ?? "",
+    username: snapshot?.username ?? "",
+    password: snapshot?.password ?? "",
+    version: snapshot?.version ?? ""
+  }
 
-  const form = useForm<CreateGlobalSnapshotSchema>({
-    resolver: zodResolver(createGlobalSnapshotSchema),
-    defaultValues: {
-      id: "",
-      name: "",
-      username: "",
-      password: "",
-      version: ""
-    }
+  const form = useForm<UpdateGlobalSnapshotSchema>({
+    resolver: zodResolver(updateGlobalSnapshotSchema),
+    defaultValues
   })
 
-  const { mutate: create, isPending } = useMutation({
-    mutationFn: async (values: CreateGlobalSnapshotSchema) => {
+  const { mutate: update, isPending } = useMutation({
+    mutationFn: async (values: UpdateGlobalSnapshotSchema) => {
       const formData = new FormData()
       Object.entries(values).forEach(([key, value]) => formData.set(key, value))
       if (selectedFile) formData.set("icon", selectedFile)
-      await api.post("/admin/global-snapshot", formData)
+      else if (selectedFile === null) formData.set("icon", "")
+      await api.patch(`/admin/global-snapshot/${snapshot?.id}`, formData)
     },
     onSuccess: () => {
-      handleOpenChange(false)
+      onOpenChange()
       queryClient.invalidateQueries({ queryKey: ["global-snapshots"] })
-      toast.success("Global snapshot created!")
+      toast.success("Global snapshot updated!")
     },
     onError: handleError
   })
 
-  const onSubmit = form.handleSubmit((values) => create(values))
+  const onSubmit = form.handleSubmit((values) => update(values))
   const {
     isDragActive,
     getRootProps,
@@ -72,20 +83,16 @@ export default function CreateGlobalSnapshotDialog() {
     setSelectedFile
   } = useSingleFileSelect(isPending)
 
-  const handleOpenChange = (open: boolean) => {
-    onOpenChange(open)
-    if (!open)
-      setTimeout(() => {
-        form.reset()
-        setSelectedFile(null)
-      }, 300)
-  }
+  useEffect(() => {
+    if (open) form.reset(defaultValues)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create global snapshot</DialogTitle>
+          <DialogTitle>Update {snapshot?.name} snapshot</DialogTitle>
           <DialogDescription>
             This will be shown to all users while deploying instance
           </DialogDescription>
@@ -106,11 +113,11 @@ export default function CreateGlobalSnapshotDialog() {
                 )}
               >
                 <input {...getInputProps()} />
-                {selectedFile ? (
+                {selectedFile !== null ? (
                   <>
                     <img
-                      src={selectedFile.preview}
-                      alt={selectedFile.name}
+                      alt={selectedFile?.name || snapshot?.name}
+                      src={selectedFile?.preview || snapshot?.iconUrl}
                       className="size-full rounded-md bg-muted object-cover object-center"
                     />
                     <div
@@ -151,32 +158,13 @@ export default function CreateGlobalSnapshotDialog() {
 
             <FormField
               control={form.control}
-              name="id"
-              disabled={isPending}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Snapshot ID</FormLabel>
-                  <FormControl>
-                    <Input
-                      autoFocus
-                      placeholder="32696784-ab63-4491-8c48-e2eb1eb531c2"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="name"
               disabled={isPending}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>OS Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Windows" {...field} />
+                    <Input autoFocus placeholder="Windows" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -229,7 +217,7 @@ export default function CreateGlobalSnapshotDialog() {
             />
 
             <Button type="submit" className="w-full" loading={isPending}>
-              Create
+              Save
             </Button>
           </form>
         </Form>

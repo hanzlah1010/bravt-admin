@@ -15,12 +15,6 @@ export enum VERIFICATION_CODE {
   CHANGE_EMAIL = "CHANGE_EMAIL"
 }
 
-export enum GLOBAL_SNAPSHOT_TYPE {
-  WINDOWS = "WINDOWS",
-  LINUX = "LINUX",
-  OTHER = "OTHER"
-}
-
 export enum RESOURCE_TYPE {
   INSTANCE = "INSTANCE",
   FIREWALL = "FIREWALL",
@@ -74,6 +68,11 @@ export enum ACTIVITY_ACTION {
   DELETE_SSH = "DELETE_SSH",
   CREATE_ISO = "CREATE_ISO",
   DELETE_ISO = "DELETE_ISO"
+}
+
+export enum PAYMENT_MODE {
+  SANDBOX = "SANDBOX",
+  PRODUCTION = "PRODUCTION"
 }
 
 export interface User {
@@ -159,7 +158,11 @@ export interface Plan {
 
 export interface GlobalSnapshot {
   id: string
-  type: GLOBAL_SNAPSHOT_TYPE
+  iconUrl?: string
+  username: string
+  password: string
+  name: string
+  version: string
 }
 
 export interface Resource {
@@ -167,6 +170,7 @@ export interface Resource {
   startTime: Date
   creditsConsumed: number
   password?: string
+  imageId?: string
   createdAt: Date
   deletedAt?: Date
   suspended?: Date
@@ -272,6 +276,7 @@ export interface PaymentKey {
   clientSecret: string
   webhookId: string
   type: PAYMENT_METHOD
+  mode: PAYMENT_MODE
 }
 
 export interface SnapshotCost {
