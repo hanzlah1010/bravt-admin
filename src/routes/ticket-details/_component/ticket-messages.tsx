@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useParams } from "react-router"
-import { AlertTriangle, ArrowDown, RefreshCw } from "lucide-react"
+import { ArrowDown } from "lucide-react"
 
 import { formatMsgDate } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -12,15 +12,8 @@ import type { TicketMessage } from "@/types/db"
 
 export function TicketMessages() {
   const { ticketId } = useParams()
-  const {
-    rawData,
-    data,
-    status,
-    refetch,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage
-  } = useTicketMessagesQuery()
+  const { rawData, data, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useTicketMessagesQuery()
 
   const containerRef = React.useRef<HTMLDivElement>(null)
   const sentinelRef = React.useRef<HTMLDivElement>(null)
@@ -113,30 +106,6 @@ export function TicketMessages() {
       return grouped
     }, {})
   }, [data])
-
-  if (status === "pending") {
-    return (
-      <div className="flex size-full flex-1 flex-col items-center justify-center gap-1 text-center">
-        <Spinner />
-        <p className="text-sm text-muted-foreground">Loading messages...</p>
-      </div>
-    )
-  }
-
-  if (status === "error") {
-    return (
-      <div className="flex size-full flex-1 flex-col items-center justify-center gap-1 space-y-2 overflow-hidden text-center">
-        <AlertTriangle />
-        <p className="text-sm text-muted-foreground">
-          Failed to fetch messages! Please try again
-        </p>
-        <Button size="sm" variant="outline" onClick={() => refetch()}>
-          <RefreshCw />
-          Retry
-        </Button>
-      </div>
-    )
-  }
 
   return (
     <div className="relative size-full overflow-y-hidden">
