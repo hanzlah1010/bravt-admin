@@ -6,9 +6,10 @@ import { ChatHeader } from "./_component/chat-header"
 import { ComposeTicketForm } from "./_component/compose-ticket-form"
 import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
-import { MessagesList } from "./_component/messages-list"
+// import { MessagesList } from "./_component/messages-list"
 import { Label } from "@/components/ui/label"
 import { useTicketMessagesQuery } from "@/queries/use-ticket-messages-query"
+import { TicketMessages } from "./_component/ticket-messages"
 
 export default function TicketDetails() {
   const {
@@ -60,7 +61,8 @@ function Comp() {
   return (
     <div className="flex size-full flex-1 flex-col overflow-hidden">
       <ChatHeader />
-      <MessagesList shouldStickToBottom={shouldStickToBottom} />
+      {/* <MessagesList shouldStickToBottom={shouldStickToBottom} /> */}
+      <TicketMessages />
       {ticket.closed ? (
         <div className="flex min-h-[73px] shrink-0 items-center justify-center gap-1 border-t p-4 text-center text-sm">
           <div className="">

@@ -76,7 +76,13 @@ export function useTicketMessagesQuery(enabled = true) {
     [queryClient]
   )
 
-  return { ...query, data: formattedData, addMessage, deleteMessage }
+  return {
+    ...query,
+    rawData: data,
+    data: formattedData,
+    addMessage,
+    deleteMessage
+  }
 }
 
 export type MessagesWithCursor = {
