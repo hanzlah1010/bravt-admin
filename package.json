@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview --port 3001",
     "ui:add": "bunx shadcn@latest add",
-    "zip:build": "rm -rf admin-dist.zip && zip -r admin-dist.zip dist "
+    "zip:build": "tsc -b && vite build --mode production && rm -rf admin-dist.zip && zip -r admin-dist.zip dist "
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
