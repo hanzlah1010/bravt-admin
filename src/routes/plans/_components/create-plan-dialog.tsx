@@ -1,10 +1,10 @@
-import { useMemo, useState } from "react"
+import { useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Check, ChevronsUpDownIcon } from "lucide-react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { api } from "@/lib/api"
 import { toast } from "sonner"
-import { FixedSizeList as List } from "react-window"
+import { Virtualizer } from "virtua"
 import {
   Dialog,
   DialogContent,
@@ -167,26 +167,10 @@ export default function CreatePlanDialog() {
 function PlansSelect({ disabled = false }) {
   const form = useFormContext()
 
-  const [search, setSearch] = useState("")
   const [open, setOpen] = useState(false)
 
   const { plans, status } = useVultrPlansQuery()
-
-  const filteredPlans = useMemo(() => {
-    const q = search.trim().toLowerCase()
-    if (!q) return plans
-
-    return plans.filter((plan) => {
-      return (
-        plan.locations.some((location) => location.toLowerCase().includes(q)) ||
-        plan.type.toLowerCase().includes(q) ||
-        plan.id.toLowerCase().includes(q) ||
-        [plan.monthly_cost, plan.hourly_cost, plan.vcpu_count, plan.ram].some(
-          (v) => String(v).includes(q)
-        )
-      )
-    })
-  }, [plans, search])
+  const ref = useRef<HTMLDivElement>(null)
 
   return (
     <FormField
@@ -216,54 +200,38 @@ function PlansSelect({ disabled = false }) {
             </FormControl>
 
             <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-              <Command shouldFilter={false}>
-                <CommandInput
-                  value={search}
-                  onValueChange={setSearch}
-                  placeholder="Search plans..."
-                />
-                <CommandList>
-                  {filteredPlans.length > 0 ? (
-                    <CommandGroup>
-                      <List
-                        height={Math.min(filteredPlans.length * 32, 200)}
-                        itemCount={filteredPlans.length}
-                        itemSize={32}
-                        width="100%"
-                      >
-                        {({ style, index }) => {
-                          const item = filteredPlans[index]
-                          return (
-                            <CommandItem
-                              key={item.id}
-                              value={item.id}
-                              style={style}
-                              onSelect={() => {
-                                field.onChange(item.id)
-                                setOpen(false)
-                              }}
-                            >
-                              {item.id}
-                              <small className="text-muted-foreground">
-                                ({formatPrice(item.hourly_cost)})
-                              </small>
-                              <Check
-                                className={cn("ml-auto size-4", {
-                                  "opacity-0": item.id !== field.value
-                                })}
-                              />
-                            </CommandItem>
-                          )
-                        }}
-                      </List>
-                    </CommandGroup>
-                  ) : (
-                    <CommandEmpty>
-                      {status === "error"
-                        ? "Failed to fetch plans."
-                        : "No plan found."}
-                    </CommandEmpty>
-                  )}
+              <Command>
+                <CommandInput placeholder="Search plans..." />
+                <CommandList ref={ref}>
+                  <CommandGroup heading="Plans">
+                    <Virtualizer scrollRef={ref}>
+                      {plans.map((plan) => (
+                        <CommandItem
+                          key={plan.id}
+                          onSelect={() => {
+                            field.onChange(plan.id)
+                            setOpen(false)
+                          }}
+                        >
+                          {plan.id}
+                          <small className="text-muted-foreground">
+                            ({formatPrice(plan.hourly_cost)})
+                          </small>
+                          <Check
+                            className={cn("ml-auto size-4", {
+                              "opacity-0": plan.id !== field.value
+                            })}
+                          />
+                        </CommandItem>
+                      ))}
+                    </Virtualizer>
+                  </CommandGroup>
+
+                  <CommandEmpty>
+                    {status === "error"
+                      ? "Failed to fetch plans."
+                      : "No plan found."}
+                  </CommandEmpty>
                 </CommandList>
               </Command>
             </PopoverContent>
