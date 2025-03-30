@@ -14,7 +14,10 @@ export function usePlansQuery() {
     queryKey: ["plans"],
     placeholderData: keepPreviousData,
     queryFn: async () => {
-      const { data } = await api.get<(VultrPlan & Plan)[]>("/admin/plan")
+      const { data } =
+        await api.get<(VultrPlan & Plan & { instancesCount: number })[]>(
+          "/admin/plan"
+        )
       return data.map(({ hourlyCost, hourly_cost, ...item }) => ({
         instanceCost: hourlyCost,
         actualCost: hourly_cost,
