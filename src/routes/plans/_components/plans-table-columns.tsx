@@ -116,6 +116,12 @@ export function getColumns({
       }
     },
     {
+      accessorKey: "instancesCount",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Instances" />
+      )
+    },
+    {
       accessorKey: "createdAt",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Created At" />

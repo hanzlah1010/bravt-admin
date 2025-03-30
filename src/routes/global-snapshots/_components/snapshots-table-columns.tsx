@@ -44,7 +44,9 @@ export function getColumns({
               className="size-full max-h-6 max-w-6 object-contain"
             />
           )}
-          <span className="font-medium">{row.original.name}</span>
+          <span className="whitespace-nowrap font-medium">
+            {row.original.name}
+          </span>
         </div>
       )
     },

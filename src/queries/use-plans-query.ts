@@ -75,4 +75,6 @@ export function usePlansQuery() {
 export type TablePlan = Pick<
   ReturnType<typeof usePlansQuery>,
   "data"
->["data"][number]
+>["data"][number] & {
+  instancesCount: number
+}
