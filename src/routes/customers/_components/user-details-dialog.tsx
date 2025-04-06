@@ -252,51 +252,48 @@ export default function UserDetailsDialog({
 export function formatBillingDescription({
   reason,
   details,
-  id
+  id,
+  unitsCharged
 }: ResourceBilling) {
+  const label = (details.label ?? details.id ?? id) as string
+
   switch (reason) {
     case "INSTANCE_CREATION":
       return (
         <>
-          Instance{" "}
-          <strong>{(details.label ?? details.id ?? id) as string}</strong>{" "}
-          created (plan: {details.plan})
+          Instance <strong>{label}</strong> created (plan: {details.plan})
         </>
       )
 
     case "INSTANCE_HOURLY_BILLING":
       return (
         <>
-          Hourly charge for instance{" "}
-          <strong>{(details.label ?? details.id ?? id) as string}</strong> (IP:{" "}
+          Hourly charge for <strong>{label}</strong> (IP:{" "}
           {details.ip ?? "unknown"})
+          {unitsCharged > 1 && ` for ${unitsCharged} hours`}
         </>
       )
 
     case "EARLY_INSTANCE_DELETION":
       return (
         <>
-          Early deletion of instance{" "}
-          <strong>{(details.label ?? details.id ?? id) as string}</strong>{" "}
-          (before 30 days)
+          Early deletion of <strong>{label}</strong> (before 30 days)
         </>
       )
 
     case "SNAPSHOT_CREATION":
       return (
         <>
-          Snapshot{" "}
-          <strong>{(details.label ?? details.id ?? id) as string}</strong>{" "}
-          created
+          Snapshot <strong>{label}</strong> created
         </>
       )
 
     case "SNAPSHOT_MONTHLY_BILLING":
       return (
         <>
-          Monthly charge for snapshot{" "}
-          <strong>{(details.label ?? details.id ?? id) as string}</strong> (
-          {formatBytes((details.snapshotSize ?? 0) as number)})
+          Monthly charge for snapshot <strong>{label}</strong> (
+          {formatBytes((details.snapshotSize ?? 0) as number)}
+          {unitsCharged > 1 ? ` for ${unitsCharged} months` : ""})
         </>
       )
 
