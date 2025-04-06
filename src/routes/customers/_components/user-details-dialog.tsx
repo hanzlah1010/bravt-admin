@@ -37,6 +37,7 @@ import {
 
 import type { ResourceBilling, User } from "@/types/db"
 import type { LucideIcon } from "lucide-react"
+import { Link } from "react-router"
 
 type UserDetailsDialogProps = {
   rowUser?: User
@@ -184,21 +185,25 @@ export default function UserDetailsDialog({
                     title="Instances"
                     count={user.instancesCount}
                     icon={DatabaseIcon}
+                    href={`/instances?label=${user.email}`}
                   />
                   <ResourceCard
                     title="Snapshots"
                     count={user.snapshotsCount}
                     icon={CameraIcon}
+                    href={`/snapshots?description=${user.email}`}
                   />
                   <ResourceCard
                     title="Firewall Groups"
                     count={user.firewallCount}
                     icon={ShieldIcon}
+                    href={`/firewall-groups?description=${user.email}`}
                   />
                   <ResourceCard
                     title="SSH Keys"
                     count={user.sshCount}
                     icon={KeyIcon}
+                    href={`/ssh-keys?name=${user.email}`}
                   />
                 </div>
               </div>
@@ -209,15 +214,15 @@ export default function UserDetailsDialog({
                     Billing History
                   </h3>
 
-                  <Card>
+                  <Card className="overflow-hidden">
                     <CardContent className="p-0">
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="pl-6">Amount</TableHead>
+                            <TableHead className="pl-6">Date</TableHead>
                             <TableHead>Details</TableHead>
                             <TableHead className="pr-6 text-right">
-                              Date
+                              Amount
                             </TableHead>
                           </TableRow>
                         </TableHeader>
@@ -225,13 +230,13 @@ export default function UserDetailsDialog({
                           {user.billingHistory.map((item) => (
                             <TableRow key={item.id}>
                               <TableCell className="whitespace-nowrap pl-6">
-                                {formatPrice(item.amount, 7)}
+                                {formatDate(item.billedAt, "PP hh:mm aa")}
                               </TableCell>
                               <TableCell className="whitespace-nowrap">
                                 {formatBillingDescription(item)}
                               </TableCell>
                               <TableCell className="whitespace-nowrap pr-6">
-                                {formatDate(item.billedAt, "PP hh:mm aa")}
+                                {formatPrice(item.amount, 7)}
                               </TableCell>
                             </TableRow>
                           ))}
@@ -268,7 +273,7 @@ export function formatBillingDescription({
     case "INSTANCE_HOURLY_BILLING":
       return (
         <>
-          Hourly charge for <strong>{label}</strong> (IP:{" "}
+          Hourly charge for instance <strong>{label}</strong> (IP:{" "}
           {details.ip ?? "unknown"})
           {unitsCharged > 1 && ` for ${unitsCharged} hours`}
         </>
@@ -277,7 +282,7 @@ export function formatBillingDescription({
     case "EARLY_INSTANCE_DELETION":
       return (
         <>
-          Early deletion of <strong>{label}</strong> (before 30 days)
+          Early deletion of instance <strong>{label}</strong> (before 30 days)
         </>
       )
 
@@ -305,29 +310,33 @@ export function formatBillingDescription({
 function ResourceCard({
   count,
   title,
+  href,
   icon: Icon
 }: {
   count: number
   title: string
+  href: string
   icon: LucideIcon
 }) {
   return (
-    <Card className="overflow-hidden">
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="rounded-md bg-primary/15 p-2 text-primary">
-              <Icon size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                {title}
-              </p>
-              <p className="text-2xl font-bold">{count}</p>
+    <Link to={href}>
+      <Card className="overflow-hidden">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="rounded-md bg-primary/15 p-2 text-primary">
+                <Icon size={20} />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  {title}
+                </p>
+                <p className="text-2xl font-bold">{count}</p>
+              </div>
             </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   )
 }
