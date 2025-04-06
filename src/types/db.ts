@@ -23,6 +23,24 @@ export enum RESOURCE_TYPE {
   ISO = "ISO"
 }
 
+export enum INSTANCE_SUSPEND_REASON {
+  LOW_CREDITS = "LOW_CREDITS",
+  BY_ADMIN = "BY_ADMIN"
+}
+
+export enum RESOURCE_BILLING_TYPE {
+  SNAPSHOT = "SNAPSHOT",
+  INSTANCE = "INSTANCE"
+}
+
+export enum BILLING_REASON {
+  INSTANCE_CREATION = "INSTANCE_CREATION",
+  INSTANCE_HOURLY_BILLING = "INSTANCE_HOURLY_BILLING",
+  EARLY_INSTANCE_DELETION = "EARLY_INSTANCE_DELETION",
+  SNAPSHOT_CREATION = "SNAPSHOT_CREATION",
+  SNAPSHOT_MONTHLY_BILLING = "SNAPSHOT_MONTHLY_BILLING"
+}
+
 export enum PAYMENT_METHOD {
   PAYPAL = "PAYPAL",
   CREDIT_CARD = "CREDIT_CARD"
@@ -114,6 +132,7 @@ export interface User {
   notifications: NotificationRecipient[]
   messagesSent: TicketMessage[]
   verificationTokens: Verification[]
+  resourceBilling: ResourceBilling[]
 }
 
 export interface RecoveryCode {
@@ -167,17 +186,33 @@ export interface GlobalSnapshot {
 
 export interface Resource {
   id: string
-  startTime: Date
+  lastBilledAt: Date
   creditsConsumed: number
   password?: string
   imageId?: string
   createdAt: Date
   deletedAt?: Date
   suspended?: Date
+  suspendReason?: INSTANCE_SUSPEND_REASON
   type: RESOURCE_TYPE
   userId: string
   user: User
   activities: Activity[]
+  billing: ResourceBilling[]
+}
+
+export interface ResourceBilling {
+  id: string
+  amount: number
+  unitsCharged: number
+  billedAt: Date
+  details: Record<string, unknown>
+  reason: BILLING_REASON
+  type: RESOURCE_BILLING_TYPE
+  resourceId?: string
+  instance?: Resource
+  userId?: string
+  user?: User
 }
 
 export interface Transaction {

@@ -14,6 +14,7 @@ import type { User } from "@/types/db"
 const UpdateUserDialog = React.lazy(() => import("./update-user-dialog"))
 const DeleteUsersDialog = React.lazy(() => import("./delete-users-dialog"))
 const SuspendUserDialog = React.lazy(() => import("./suspend-user-dialog"))
+const UserDetailsDialog = React.lazy(() => import("./user-details-dialog"))
 const ImpersonateUserDialog = React.lazy(
   () => import("./impersonate-user-dialog")
 )
@@ -100,6 +101,14 @@ export function UsersTable() {
           open={rowAction?.type === "suspend"}
           onOpenChange={() => setRowAction(null)}
           user={rowAction?.row.original}
+        />
+        <UserDetailsDialog
+          open={rowAction?.type === "details"}
+          rowUser={rowAction?.row.original}
+          onOpenChange={() => {
+            if (rowAction) setRowAction({ type: "", row: rowAction?.row })
+            setTimeout(() => setRowAction(null), 300)
+          }}
         />
       </React.Suspense>
     </>

@@ -81,10 +81,14 @@ export function getColumns({
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Email" />
       ),
-      cell: ({ cell }) => (
-        <div className="whitespace-nowrap font-medium">
+      cell: ({ row, cell }) => (
+        <Button
+          variant="link"
+          className="size-fit p-0 text-foreground"
+          onClick={() => setRowAction({ row, type: "details" })}
+        >
           {cell.getValue() as string}
-        </div>
+        </Button>
       )
     },
     {

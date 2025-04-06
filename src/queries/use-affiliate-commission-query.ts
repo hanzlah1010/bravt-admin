@@ -5,7 +5,6 @@ export function useAffiliateCommissionQuery() {
   return useQuery({
     queryKey: ["affiliate-commission"],
     queryFn: async () => {
-      await new Promise((res) => setTimeout(res, 3000))
       const { data } = await api.get<{ commission: number }>(
         "/affiliate/commission"
       )
