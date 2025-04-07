@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import { formatDate } from "date-fns"
 import {
   AlertTriangleIcon,
@@ -11,6 +12,7 @@ import {
   UserIcon
 } from "lucide-react"
 
+import { RESOURCE_BILLING_TYPE } from "@/types/db"
 import { formatBytes, formatPrice } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
 import { useUserByIdQuery } from "@/queries/use-user-by-id-query"
@@ -37,7 +39,6 @@ import {
 
 import type { ResourceBilling, User } from "@/types/db"
 import type { LucideIcon } from "lucide-react"
-import { Link } from "react-router"
 
 type UserDetailsDialogProps = {
   rowUser?: User
@@ -53,7 +54,7 @@ export default function UserDetailsDialog({
 
   return (
     <Sheet {...props}>
-      <SheetContent side="right" className="overflow-y-auto sm:max-w-lg">
+      <SheetContent side="right" className="overflow-y-auto sm:max-w-screen-xl">
         {status === "pending" ? (
           <div className="flex h-full items-center justify-center">
             <Spinner />
@@ -214,29 +215,47 @@ export default function UserDetailsDialog({
                     Billing History
                   </h3>
 
-                  <Card className="overflow-hidden">
+                  <Card className="text-foreground6 overflow-hidden bg-background">
                     <CardContent className="p-0">
                       <Table>
                         <TableHeader>
                           <TableRow>
                             <TableHead className="pl-6">Date</TableHead>
                             <TableHead>Details</TableHead>
-                            <TableHead className="pr-6 text-right">
-                              Amount
-                            </TableHead>
+                            <TableHead className="pr-6">Amount</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {user.billingHistory.map((item) => (
-                            <TableRow key={item.id}>
-                              <TableCell className="whitespace-nowrap pl-6">
-                                {formatDate(item.billedAt, "PP hh:mm aa")}
+                            <TableRow
+                              key={item.id}
+                              className="even:bg-card odd:hover:bg-background"
+                            >
+                              <TableCell className="whitespace-nowrap pl-6 text-[13px]">
+                                {formatDate(item.billedAt, "PP - p")}
                               </TableCell>
                               <TableCell className="whitespace-nowrap">
                                 {formatBillingDescription(item)}
                               </TableCell>
                               <TableCell className="whitespace-nowrap pr-6">
-                                {formatPrice(item.amount, 7)}
+                                <span className="font-medium">
+                                  {formatPrice(item.amount)}
+                                </span>
+                                <br />
+                                {item.type === RESOURCE_BILLING_TYPE.INSTANCE &&
+                                  typeof item.details.backupsCost ===
+                                    "number" &&
+                                  item.details.backupsCost > 0 && (
+                                    <span className="whitespace-nowrap text-xs text-muted-foreground">
+                                      <strong>Backups:</strong>{" "}
+                                      {formatPrice(item.details.backupsCost)}
+                                      <br />
+                                      <strong>Instance:</strong>{" "}
+                                      {formatPrice(
+                                        item.amount - item.details.backupsCost
+                                      )}
+                                    </span>
+                                  )}
                               </TableCell>
                             </TableRow>
                           ))}

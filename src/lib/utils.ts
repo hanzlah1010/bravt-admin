@@ -60,11 +60,6 @@ export function encodeQueryParams(searchParams: Values<UseQueryStatesKeysMap>) {
   })
 }
 
-export function formatBytesToGB(bytes: number) {
-  if (!bytes) return "0 GB"
-  return `${(bytes / 1024 ** 3).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} GB`
-}
-
 export function getUserInitials(user: Partial<User>) {
   if (user.firstName) {
     return `${user.firstName.charAt(0)}${user.lastName?.charAt(0) || ""}`.toUpperCase()
@@ -99,5 +94,5 @@ export function formatBytes(bytes: number, decimals = 2) {
   const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
   const i = Math.floor(Math.log(bytes) / Math.log(1024))
 
-  return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(decimals))} ${sizes[i]}`
+  return `${Number((bytes / Math.pow(1024, i)).toFixed(decimals))} ${sizes[i]}`
 }

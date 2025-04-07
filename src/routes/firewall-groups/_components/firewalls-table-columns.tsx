@@ -73,7 +73,7 @@ export function getColumns({
       ),
       cell: ({ cell }) => (
         <span className="whitespace-nowrap">
-          {formatDate(cell.getValue() as Date, "PP hh:mm aa")}
+          {formatDate(cell.getValue() as Date, "PP - p")}
         </span>
       )
     },

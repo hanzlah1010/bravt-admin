@@ -77,7 +77,7 @@ export function TicketsList() {
           >
             <Link
               onClick={() => updateTicket(ticket.id, { unseenMessages: 0 })}
-              title={`${ticket.user.firstName ? `${ticket.user.firstName} ${ticket.user.lastName}\n` : ""}${ticket.user.email}\n${ticket.topic}\n${format(ticket.lastMessageAt ?? ticket.createdAt, "PPP hh:mm aa")}`}
+              title={`${ticket.user.firstName ? `${ticket.user.firstName} ${ticket.user.lastName}\n` : ""}${ticket.user.email}\n${ticket.topic}\n${format(ticket.lastMessageAt ?? ticket.createdAt, "PPP p")}`}
               to={{
                 pathname: `/tickets/${ticket.id}`,
                 search: closed ? "?closed=true" : ""

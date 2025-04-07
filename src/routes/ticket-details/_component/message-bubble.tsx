@@ -76,7 +76,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             })}
           >
             <p className="text-xs text-muted-foreground">
-              {formatDate(message.createdAt, "hh:mm aa")}
+              {formatDate(message.createdAt, "p")}
             </p>
 
             {isAdminMessage && (
@@ -87,9 +87,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
                 )}
               >
                 <title>
-                  {message.seen
-                    ? formatDate(message.seen, "PPP hh:mm aa")
-                    : "Unseen"}
+                  {message.seen ? formatDate(message.seen, "PPP p") : "Unseen"}
                 </title>
               </CheckCheckIcon>
             )}

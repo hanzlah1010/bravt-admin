@@ -68,9 +68,7 @@ export function ChatHeader() {
           htmlFor={"close-ticket"}
           className="whitespace-nowrap"
           title={
-            ticket.closed
-              ? `${formatDate(ticket.closed, "PP hh:mm aa")}`
-              : undefined
+            ticket.closed ? `${formatDate(ticket.closed, "PP - p")}` : undefined
           }
         >
           {ticket.closed ? "Ticket Closed" : "Close Ticket"}

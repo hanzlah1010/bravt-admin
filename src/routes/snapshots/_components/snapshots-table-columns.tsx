@@ -3,7 +3,7 @@ import { Trash2 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { formatBytesToGB, formatPrice, toSentenceCase } from "@/lib/utils"
+import { formatBytes, formatPrice, toSentenceCase } from "@/lib/utils"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 
 import type { ColumnDef } from "@tanstack/react-table"
@@ -39,7 +39,7 @@ export function getColumns({
       ),
       cell: ({ row }) => (
         <span className="whitespace-nowrap">
-          {formatBytesToGB(row.original.compressed_size)}
+          {formatBytes(row.original.compressed_size)}
         </span>
       )
     },
@@ -92,7 +92,7 @@ export function getColumns({
       ),
       cell: ({ cell }) => (
         <span className="whitespace-nowrap">
-          {formatDate(cell.getValue() as Date, "PP hh:mm aa")}
+          {formatDate(cell.getValue() as Date, "PP - p")}
         </span>
       )
     },
