@@ -115,21 +115,33 @@ export default function UpdateGlobalSnapshotDialog({
                 <input {...getInputProps()} />
                 {selectedFile !== null ? (
                   <>
-                    <img
-                      alt={selectedFile?.name || snapshot?.name}
-                      src={selectedFile?.preview || snapshot?.iconUrl}
-                      className="size-full rounded-md bg-muted object-cover object-center"
-                    />
-                    <div
-                      className={cn(
-                        "absolute z-10 flex size-full items-center justify-center overflow-hidden rounded-md bg-black/60 text-white/80 transition-opacity",
-                        isDragActive
-                          ? "opacity-100"
-                          : "opacity-0 group-hover:opacity-100"
-                      )}
-                    >
-                      <ImagePlusIcon className="size-5" />
-                    </div>
+                    {selectedFile || snapshot?.iconUrl ? (
+                      <>
+                        <img
+                          alt={selectedFile?.name || snapshot?.name}
+                          src={selectedFile?.preview || snapshot?.iconUrl}
+                          className="size-full rounded-md bg-muted object-cover object-center"
+                        />
+                        <div
+                          className={cn(
+                            "absolute z-10 flex size-full items-center justify-center overflow-hidden rounded-md bg-black/60 text-white/80 transition-opacity",
+                            isDragActive
+                              ? "opacity-100"
+                              : "opacity-0 group-hover:opacity-100"
+                          )}
+                        >
+                          <ImagePlusIcon className="size-5" />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <UploadIcon className="size-5" />
+                        <p className="text-center text-sm">
+                          {isDragActive ? "Drop" : "Upload"}
+                        </p>
+                      </>
+                    )}
+
                     <Button
                       variant="destructive"
                       size="icon"

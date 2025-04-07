@@ -38,15 +38,17 @@ export function getColumns({
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           {row.original.iconUrl && (
-            <img
-              src={row.original.iconUrl}
-              alt={row.original.name}
-              className="size-full max-h-6 max-w-6 object-contain"
-            />
+            <div className="size-5">
+              <img
+                src={row.original.iconUrl}
+                alt={row.original.name}
+                className="size-full object-contain"
+              />
+            </div>
           )}
-          <span className="whitespace-nowrap font-medium">
+          <div className="whitespace-nowrap font-medium">
             {row.original.name}
-          </span>
+          </div>
         </div>
       )
     },
@@ -54,15 +56,13 @@ export function getColumns({
       accessorKey: "version",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Version" />
-      ),
-      cell: ({ row }) => <span>{row.original.version}</span>
+      )
     },
     {
       accessorKey: "username",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Username" />
-      ),
-      cell: ({ row }) => <span>{row.original.username}</span>
+      )
     },
     {
       accessorKey: "password",
